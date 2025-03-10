@@ -27,15 +27,17 @@ From the user's perspective, it seems simple, but in reality, it will be fairly 
 
 This procedure can be created using the following steps:
 
-1. Get the audio file from youtube (or any other source)
-2. Convert it to a correct format (e.g., mp3, but im not sure what is correct for this task) using ffmpeg
-3. Create a spectrogram from the audio file - i would not do it manually, but use some library for that (it probably exists)
-4. Create a fingerprint from the spectrogram - this is the most important part, and I have no idea how to do it yet but from what I read:
-    - you have to reduce the quality of the spectrogram - this will reduce size thus increase speed of processing and comparisons but also decreases noise to signal ratio, so algorithm should be more accurate
+1. Get the audio file from YouTube (or any other source)
+2. Convert it to a correct format (e.g., mp3, but I'm not sure what is correct for this task) using FFmpeg
+3. Create a spectrogram from the audio file - I would not do it manually, but use some library for that (it probably exists)
+4. Create a fingerprint from the spectrogram - this is the most crucial part, and I have no idea how to do it yet, but from what I read:
+    - you have to reduce the quality of the spectrogram - this will reduce the size and thus increase the speed of processing and comparisons but also decrease noise to signal ratio, so the algorithm should be more accurate
     - reduce the frequency of the spectrogram to those that are used in songs - this will reduce the size of the fingerprint
     - process the spectrogram to create a scatter plot of the most important points
     - process somehow this scatter plot to create a fingerprint
 5. Store the fingerprint in the database with metadata (e.g., song name, artist, etc.)
+
+Truth be told, I'm guessing there is a Python package that does all of this (maybe I'm wrong), but I don't want to use it. On the other hand, I don't want to write it from scratch (because that is not the point), so there is a balance that we have to find.
 
 ### What happens when crawling
 
