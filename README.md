@@ -4,7 +4,7 @@
 
 - *algorithm* that finds similarity between audio tracks (core, this will take most of the time)
 - *a web interface* that allows for recording of the audio (or adding it as a file) and transforms it into a simplified spectrogram. Then, query it against the dataset (how do you do it in the browser? You might as well send audio to the server, but it is expensive and ineffective. Also, privacy is a key factor). For sure, FFmpeg will be useful
-- *crawler* that processes songs, so to simplify this step, I would use **static lists of the top 1000 songs of all time and a list of all Tylor Swift songs**, but then it needs to read them (from YouTube, I guess) and preprocess them and add it to the database
+- *crawler* that processes songs, so to simplify this step, I would use **static lists of the top 10000 songs of all time and a list of all Taylor Swift songs**, but then it needs to read them (from YouTube, I guess) and preprocess them and add it to the database
 - *database* that stores crawled songs (it does not store the songs, only the fingerprint and the metadata - I think it might be relational db; maybe mongoDB idk how fingerprint looks like)
 - *load balancing* in front (or proxy, not sure if we want to serve static content, most likely images of thumbnails or something like that)
 - *cache layer* (maybe in front of the database) - I guess top songs cause the majority of traffic at a given period, but it brings complexity, and realistically speaking, we don't need it in this project, but if it would be serious, then it is a must
@@ -25,7 +25,17 @@ From the user's perspective, it seems simple, but in reality, it will be fairly 
 
 ### How fingerprints are created
 
-`TODO`
+This procedure can be created using the following steps:
+
+1. Get the audio file from youtube (or any other source)
+2. Convert it to a correct format (e.g., mp3, but im not sure what is correct for this task) using ffmpeg
+3. Create a spectrogram from the audio file - i would not do it manually, but use some library for that (it probably exists)
+4. Create a fingerprint from the spectrogram - this is the most important part, and I have no idea how to do it yet but from what I read:
+    - you have to reduce the quality of the spectrogram - this will reduce size thus increase speed of processing and comparisons but also decreases noise to signal ratio, so algorithm should be more accurate
+    - reduce the frequency of the spectrogram to those that are used in songs - this will reduce the size of the fingerprint
+    - process the spectrogram to create a scatter plot of the most important points
+    - process somehow this scatter plot to create a fingerprint
+5. Store the fingerprint in the database with metadata (e.g., song name, artist, etc.)
 
 ### What happens when crawling
 
