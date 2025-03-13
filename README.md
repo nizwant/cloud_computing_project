@@ -1,5 +1,47 @@
 # Cloud-project
 
+### Project description
+There is an official description of the project in our group, but it is lacklustre, so I will try to create a better one based on lectures and guidelines from previous years.
+
+General requirements:
+
+- UI
+- Storage
+- Terraform
+- Large-scale assumption
+- Rather Paas or Serverless than IaaS
+- Queue (optional)
+- Unit tests (optional)
+- CI/CD (optional)
+- Monitoring (optional)
+
+We have to deliver a report and a presentation plan. The deadline is 21.04. The report should contain:
+
+- Diagram with (micro)services and their connections  
+- Design APIs (REST, RPC, GraphQL, …)
+- Storage characteristics
+  - Structured / unstructured
+  - SQL / NoSQL
+  - Strong / Eventual Consistency
+  - Amount of Data
+  - Read-only / Read & Write
+  - …
+- Terraform (working)
+- SLA, SLO, SLI
+
+### Products and services we might use
+
+This section covers only GCP services. The goal of this course is to learn about cloud computing, so we should use `serverless` services and not focus on `VMs`. Ideally, we should configure everything using `Terraform`.
+
+- Cloud Run - dockerized applications
+- Cloud Functions - seems like a good fit for processing requests to recognize songs, but I'm not sure yet
+- App Engine - maybe for the simple web interface (I have read a blog about a comparison of this and cloud run, and the difference between cost was like 11$ vs 0.09$ for a month of usage, but there is more to this than meets the eye, and even if that is the case I would use App Engine just for the sake of testing it. It doesn't have to make sense)
+- storage (idk yet what product to use) - maybe MongoDB Atlas, or Cloud SQL
+- queuing (not sure yet) - Cloud Tasks
+- some kind of load balancing or proxy
+
+Well, in theory, everything related to the compute can be done using Cloud Functions, but I'm not sure if it is a good idea. Even if it is, this project is about learning, so we should try to use more than one service to get to know them better and understand their pros and cons.
+
 ### Modules
 
 - *algorithm* that finds similarity between audio tracks (core, this will take most of the time)
@@ -7,13 +49,13 @@
 - *crawler* that processes songs, so to simplify this step, I would use **static lists of the top 10000 songs of all time and a list of all Taylor Swift songs**, but then it needs to read them (from YouTube, I guess) and preprocess them and add it to the database
 - *database* that stores crawled songs (it does not store the songs, only the fingerprint and the metadata - I think it might be relational db; maybe mongoDB idk how fingerprint looks like)
 - *load balancing* in front (or proxy, not sure if we want to serve static content, most likely images of thumbnails or something like that)
-- *cache layer* (maybe in front of the database) - I guess top songs cause the majority of traffic at a given period, but it brings complexity, and realistically speaking, we don't need it in this project, but if it would be serious, then it is a must
+- *cache layer* (maybe in front of the database) - I guess top songs cause the majority of traffic at a given period, but it brings complexity, and realistically speaking, we don't need it in this project, but if it would be serious, then it is a must. On the other hand, we have to compare songs against all songs in the database, so I don't know if there is a lot of benefit from caching
 
 ### User Capabilities
 
 - record a snippet of a song with possible noise or add it as a file in a web browser
 - show the match and player with a YouTube video of that song
-- user should have the ability to add their songs (not mandatory, I think) - but this we should implement when we have time - maybe add a link from YouTube, and then it will work on this snippet
+- user should have the ability to add their songs (not mandatory, I think) - but this we should implement when we have time - maybe add a link from YouTube, and then it will work on this snippet; I think we will use it too when uploading songs from the data frames, there a are few options, for sure audio we will get from YouTube, but when it comes to metadata, we can use Spotify API, then user would need to pass title and artist, this would create a single interface for adding songs, or link to Spotify is even easier, but we might not have the data frame with this info so we would have to join ourselves
 
 From the user's perspective, it seems simple, but in reality, it will be fairly complex.
 
