@@ -1,5 +1,19 @@
 # Cloud-project
 
+### Project description
+There is no official description of the project in our group, so I will try to create one base on lecture and guidelines from previous years.
+
+### Products and services we might use
+
+This section covers only GCP services. Goal of this course is to learn about cloud computing, so we should use `serverless` services and not focus on `VMs`. Ideally, we should configure everything using `Terraform`.
+
+- Cloud Run - dockerized applications
+- Cloud Functions
+- App Engine - maybe for simple web interface
+- storage (idk yet what product to use) - maybe mongoDB Atlas, or Cloud SQL
+- queuing (not sure yet)
+- some kind of load balancing or proxy
+
 ### Modules
 
 - *algorithm* that finds similarity between audio tracks (core, this will take most of the time)
@@ -7,7 +21,7 @@
 - *crawler* that processes songs, so to simplify this step, I would use **static lists of the top 10000 songs of all time and a list of all Taylor Swift songs**, but then it needs to read them (from YouTube, I guess) and preprocess them and add it to the database
 - *database* that stores crawled songs (it does not store the songs, only the fingerprint and the metadata - I think it might be relational db; maybe mongoDB idk how fingerprint looks like)
 - *load balancing* in front (or proxy, not sure if we want to serve static content, most likely images of thumbnails or something like that)
-- *cache layer* (maybe in front of the database) - I guess top songs cause the majority of traffic at a given period, but it brings complexity, and realistically speaking, we don't need it in this project, but if it would be serious, then it is a must
+- *cache layer* (maybe in front of the database) - I guess top songs cause the majority of traffic at a given period, but it brings complexity, and realistically speaking, we don't need it in this project, but if it would be serious, then it is a must. On the other hand we have to compare song against all songs in the database, so I don't know if there is a lot of benefit from caching
 
 ### User Capabilities
 
