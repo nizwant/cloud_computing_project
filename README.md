@@ -1,18 +1,20 @@
 # Cloud-project
 
 ### Project description
-There is no official description of the project in our group, so I will try to create one base on lecture and guidelines from previous years.
+There is no official description of the project in our group, so I will try to create one based on lectures and guidelines from previous years.
 
 ### Products and services we might use
 
-This section covers only GCP services. Goal of this course is to learn about cloud computing, so we should use `serverless` services and not focus on `VMs`. Ideally, we should configure everything using `Terraform`.
+This section covers only GCP services. The goal of this course is to learn about cloud computing, so we should use `serverless` services and not focus on `VMs`. Ideally, we should configure everything using `Terraform`.
 
 - Cloud Run - dockerized applications
-- Cloud Functions
-- App Engine - maybe for simple web interface
+- Cloud Functions - seems like a good fit for processing requests to recognize songs, but I'm not sure yet
+- App Engine - maybe for simple web interface (I have read a blog about comparison this and cloud run and difference between cost were like 11$ vs 0.09$ for month of usage, but there is more to this than meets the eye, and even if that is the case I would use App Engine just for the sake of testing it. It doesn't have to make sense)
 - storage (idk yet what product to use) - maybe mongoDB Atlas, or Cloud SQL
-- queuing (not sure yet)
+- queuing (not sure yet) - Cloud Tasks
 - some kind of load balancing or proxy
+
+Well, in theory, everything related to the compute can be done using Cloud Functions, but I'm not sure if it is a good idea. Even if it is, this project is about learning, so we should try to use more than one service to get to know them better and understand their pros and cons.
 
 ### Modules
 
@@ -27,7 +29,7 @@ This section covers only GCP services. Goal of this course is to learn about clo
 
 - record a snippet of a song with possible noise or add it as a file in a web browser
 - show the match and player with a YouTube video of that song
-- user should have the ability to add their songs (not mandatory, I think) - but this we should implement when we have time - maybe add a link from YouTube, and then it will work on this snippet
+- user should have the ability to add their songs (not mandatory, I think) - but this we should implement when we have time - maybe add a link from YouTube, and then it will work on this snippet, I think we will use it too when uploading songs from the data frames, there a are few options, for sure audio we will get from YouTube, but when it comes to metadata, we can use spotify API, then user would need to pass title and artist, this would create a single interface for adding songs, or link to spotify is even easier, but we might not have the data frame with this info so we would have to join ourselves
 
 From the user's perspective, it seems simple, but in reality, it will be fairly complex.
 
