@@ -1,7 +1,33 @@
 # Cloud-project
 
 ### Project description
-There is no official description of the project in our group, so I will try to create one based on lectures and guidelines from previous years.
+There is official description of the project in our group but it is lackluster, so I will try to create a better one based on lectures and guidelines from previous years.
+
+General requirements:
+
+- UI
+- Storage
+- Terraform
+- Large scale assumption
+- Rather Paas or Serverless than IaaS
+- Queue (optional)
+- Unit tests (optional)
+- CI/CD (optional)
+- Monitoring (optional)
+
+We have to deliver an report and a presentation plan. Deadline is due 21.04. Report should contain:
+
+- Diagram with (micro)services and their connections  
+- Design APIs (REST, RPC, GraphQL, …)
+- Storage characteristics
+  - Structured / unstructured
+  - SQL / NoSQL
+  - Strong / Eventual Consistency
+  - Amount of Data
+  - Read only / Read & Write
+  - …
+- Terraform (working)
+- SLA, SLO, SLI
 
 ### Products and services we might use
 
