@@ -15,7 +15,7 @@ General requirements:
 - CI/CD (optional)
 - Monitoring (optional)
 
-We have to deliver a report and a presentation plan. The deadline is 21.04. The report should contain:
+We have to deliver a report and a presentation plan. The deadline is *21.04* (**Not for working application, just for plan of report and presentation**). The report should contain:
 
 - Diagram with (micro)services and their connections  
 - Design APIs (REST, RPC, GraphQL, …)
