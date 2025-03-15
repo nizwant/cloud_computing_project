@@ -81,21 +81,17 @@ This procedure can be created using the following steps:
 
 Truth be told, I'm guessing there is a Python package that does all of this (maybe I'm wrong), but I don't want to use it. On the other hand, I don't want to write it from scratch (because that is not the point), so there is a balance that we have to find.
 
-### What happens when crawling
+### What happens when crawling (user wants to add a new song / new database of songs is added)
 
-`TODO`
+<img src="https://github.com/nizwant/Cloud-project/blob/main/deliverable/img/adding_new_songs.png" alt="crawling" width="700">
 
 ### What happens when the user wants to find what song it is
 
-`TODO`
-
-### What happens when the user wants to add a new song
-
-`TODO`
+<img src="https://github.com/nizwant/Cloud-project/blob/main/deliverable/img/finding_what_song_it_is.png" alt="recognizing" width="900">
 
 ### What happens when the user wants to see what songs are in the database (optional but useful when debugging and grading)
 
-`TODO`
+<img src="https://github.com/nizwant/Cloud-project/blob/main/deliverable/img/list_available_songs.png" alt="listing" width="400">
 
 ### Unanswered questions
 
