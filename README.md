@@ -5,9 +5,9 @@ The project is a part of the Cloud Computing course at the Warsaw University of 
 
 ### Team members
 
-- Łukasz Lepianka
-- Mateusz Nizwantowski
-- Marta Szuwarska
+- [Łukasz Lepianka](https://github.com/Luki308)
+- [Mateusz Nizwantowski](https://github.com/nizwant)
+- [Marta Szuwarska](https://github.com/szuvarska)
 
 ### Architecture
 
