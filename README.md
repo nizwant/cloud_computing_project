@@ -1,7 +1,23 @@
 # Cloud-project
 
 ### Project description
-There is an official description of the project in our group, but it is lacklustre, so I will try to create a better one based on lectures and guidelines from previous years.
+The project is a part of the Cloud Computing course at the Warsaw University of Technology. The project's goal is to create an application using GCP services; the rest is up to us. We decided to make a song recognition application. The user will be able to record a snippet of a song or upload a file, and the application will recognize the song and display the result. We want to recreate a simpler version of Shazam.
+
+### Team members
+
+- Łukasz Lepianka
+- Mateusz Nizwantowski
+- Marta Szuwarska
+
+### Architecture
+
+The architecture of the project is presented in the following diagram:
+
+<img src="https://github.com/nizwant/Cloud-project/blob/main/deliverable/img/architecture.png" alt="crawling" width="700">
+
+### Project requirements
+
+There is an official list of requirements for the project in our group, but it is lackluster, so I will try to create a better one based on lectures and guidelines from previous years.
 
 General requirements:
 
