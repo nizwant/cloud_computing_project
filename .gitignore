@@ -5,3 +5,4 @@ venv_cloud
 __pycache__/
 *.py[cod]
 *$py.class
+.venv
