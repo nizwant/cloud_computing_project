@@ -118,3 +118,23 @@ Truth be told, we're guessing there is a Python package that does all of this (m
 - rate limiting
 - monitoring
 - how should we handle errors
+
+### What already has been done
+
+- [x] create a repository
+- [x] create a basic structure of the project
+- [x] plan the architecture of the project
+- [x] write a module that takes a song name and artist and returns a list of videos from YouTube
+- [x] create a script that downloads songs from YouTube
+- [x] develop a algorithm that creates a fingerprint from the audio file
+- [x] test the algorithm on a few songs recorded by our phones
+- [ ] CI/CD
+- [ ] write a terraform script that creates all the necessary resources in GCP
+- [ ] take all the knowledge from notebooks and create a working code out of it
+- [ ] write a tests
+- [ ] create a web interface
+- [ ] create a backend
+- [ ] create a crawler that processes songs
+- [ ] populate the database with songs
+- [ ] create a load balancer
+- [ ] end to end test the application
