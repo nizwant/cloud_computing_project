@@ -17,7 +17,7 @@ The architecture of the project is presented in the following diagram:
 
 ### Project requirements
 
-There is an official list of requirements for the project in our group, but it is lackluster, so I will try to create a better one based on lectures and guidelines from previous years.
+There is no an official list of requirements for the project as of writing this, so we will try to create one based on lectures and guidelines from previous years.
 
 General requirements:
 
@@ -31,7 +31,7 @@ General requirements:
 - CI/CD
 - Monitoring (optional)
 
-We have to deliver a report and a presentation plan. The deadline is *28.04* (**Not for working application, just for plan of report and presentation**). The report should contain:
+We have to deliver a report and presentat our ideas. The deadline is *28.04* (**Not for working application, just for the report and presentation**). The report should contain:
 
 - Diagram with (micro)services and their connections  
 - Design APIs (REST, RPC, GraphQL, …)
@@ -50,7 +50,7 @@ We have to deliver a report and a presentation plan. The deadline is *28.04* (**
 This section covers only GCP services. The goal of this course is to learn about cloud computing, so we should use `serverless` services and not focus on `VMs`. Ideally, we should configure everything using `Terraform`. (It is a requirement)
 
 - Cloud Run - dockerized applications
-- Cloud Functions - seems like a good fit for processing requests to recognize songs, but I'm not sure yet
+- Cloud Functions - seems like a good fit for processing requests to recognize songs
 - App Engine - maybe for the simple web interface (I have read a blog about a comparison of this and cloud run, and the difference between cost was like 11$ vs 0.09$ for a month of usage, but there is more to this than meets the eye, and even if that is the case I would use App Engine just for the sake of testing it. It doesn't have to make sense)
 - storage - Cloud SQL
 - queuing - Pub/Sub
@@ -62,8 +62,8 @@ Well, in theory, everything related to the compute can be done using Cloud Funct
 
 - *algorithm* that finds similarity between audio tracks (core, this will take most of the time)
 - *a web interface* that allows for recording of the audio (or adding it as a file) and transforms it into a simplified spectrogram. Then, query it against the dataset (how do you do it in the browser? You might as well send audio to the server, but it is expensive and ineffective. Also, privacy is a key factor). For sure, FFmpeg will be useful
-- *crawler* that processes songs, so to simplify this step, I would use **static lists of the top 10000 songs of all time and a list of all Taylor Swift songs**, but then it needs to read them (from YouTube, I guess) and preprocess them and add it to the database
-- *database* that stores crawled songs (it does not store the songs, only the fingerprint and the metadata - I think it might be relational db; maybe mongoDB idk how fingerprint looks like)
+- *crawler* that processes songs, as an initial source of songs, we use **static lists of the top 10000 songs of all time and a list of all Taylor Swift songs**, but then it needs to download them (from YouTube), preprocess and save to the database
+- *database* that stores crawled songs (it does not store the songs, only the fingerprint and the metadata) we have to test how performant it is with relational data base and only then decide
 - *load balancing* in front (or proxy, not sure if we want to serve static content, most likely images of thumbnails or something like that)
 - *cache layer* (maybe in front of the database) - I guess top songs cause the majority of traffic at a given period, but it brings complexity, and realistically speaking, we don't need it in this project, but if it would be serious, then it is a must. On the other hand, we have to compare songs against all songs in the database, so I don't know if there is a lot of benefit from caching
 
@@ -85,17 +85,19 @@ From the user's perspective, it seems simple, but in reality, it will be fairly 
 
 This procedure can be created using the following steps:
 
-1. Get the audio file from YouTube (or any other source)
-2. Convert it to a correct format (e.g., mp3, but I'm not sure what is correct for this task) using FFmpeg
-3. Create a spectrogram from the audio file - I would not do it manually, but use some library for that (it probably exists)
-4. Create a fingerprint from the spectrogram - this is the most crucial part, and I have no idea how to do it yet, but from what I read:
-    - you have to reduce the quality of the spectrogram - this will reduce the size and thus increase the speed of processing and comparisons but also decrease noise to signal ratio, so the algorithm should be more accurate
+1. Get the audio file from YouTube or user
+   - If it is from YouTube, we use youtube-dl to download the audio
+   - If it is from the user, we will either process it on the client side (if it possible) or just upload it to the server
+2. Convert it to a correct format using FFmpeg
+3. Create a spectrogram from the audio file - using some library for that
+4. Create a fingerprint from the spectrogram - this is the most crucial part, some of the processes that we can do:
+    - reduce the quality of the spectrogram - this will reduce the size and thus increase the speed of processing and comparisons but also decrease noise to signal ratio, so the algorithm should be more accurate
     - reduce the frequency of the spectrogram to those that are used in songs - this will reduce the size of the fingerprint
     - process the spectrogram to create a scatter plot of the most important points
     - process somehow this scatter plot to create a fingerprint
 5. Store the fingerprint in the database with metadata (e.g., song name, artist, etc.)
 
-Truth be told, We're guessing there is a Python package that does all of this (maybe We're wrong), but We don't want to use it. On the other hand, We don't want to write it from scratch (because that is not the point), so there is a balance that we have to find.
+Truth be told, we're guessing there is a Python package that does all of this (maybe we're wrong), but we don't want to use it. On the other hand, we don't want to write it from scratch (because that is not the point), so there is a balance that we have to find.
 
 ### What happens when crawling (user wants to add a new song / new database of songs is added)
 
