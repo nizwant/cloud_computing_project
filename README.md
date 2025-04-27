@@ -121,6 +121,7 @@ Truth be told, we're guessing there is a Python package that does all of this (m
 - [x] create a repository
 - [x] create a basic structure for the project
 - [x] plan the architecture of the project
+- [x] obtain access to GCP, test it
 - [x] write a module that takes a song name and artist and returns a list of videos from YouTube
 - [x] create a script that downloads songs from YouTube
 - [x] develop an algorithm that creates a fingerprint from the audio file
