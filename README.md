@@ -17,7 +17,7 @@ The architecture of the project is presented in the following diagram:
 
 ### Project requirements
 
-There is no an official list of requirements for the project as of writing this, so we will try to create one based on lectures and guidelines from previous years.
+There is no official list of requirements for the project as of writing this, so we will try to create one based on lectures and guidelines from previous years.
 
 General requirements:
 
@@ -31,7 +31,7 @@ General requirements:
 - CI/CD
 - Monitoring (optional)
 
-We have to deliver a report and presentat our ideas. The deadline is *28.04* (**Not for working application, just for the report and presentation**). The report should contain:
+We have to deliver a report and present our ideas. The deadline is *28.04* (**Not for working application, just for the report and presentation**). The report should contain:
 
 - Diagram with (micro)services and their connections  
 - Design APIs (REST, RPC, GraphQL, …)
@@ -56,14 +56,14 @@ This section covers only GCP services. The goal of this course is to learn about
 - queuing - Pub/Sub
 - load balancing - Cloud Load Balancing
 
-Well, in theory, everything related to the compute can be done using Cloud Functions, but I'm not sure if it is a good idea. Even if it is, this project is about learning, so we should try to use more than one service to get to know them better and understand their pros and cons.
+Well, in theory, everything related to computing can be done using Cloud Functions, but I'm not sure if it is a good idea. Even if it is, this project is about learning, so we should try to use more than one service to get to know them better and understand their pros and cons.
 
 ### Modules
 
 - *algorithm* that finds similarity between audio tracks (core, this will take most of the time)
 - *a web interface* that allows for recording of the audio (or adding it as a file) and transforms it into a simplified spectrogram. Then, query it against the dataset (how do you do it in the browser? You might as well send audio to the server, but it is expensive and ineffective. Also, privacy is a key factor). For sure, FFmpeg will be useful
 - *crawler* that processes songs, as an initial source of songs, we use **static lists of the top 10000 songs of all time and a list of all Taylor Swift songs**, but then it needs to download them (from YouTube), preprocess and save to the database
-- *database* that stores crawled songs (it does not store the songs, only the fingerprint and the metadata) we have to test how performant it is with relational data base and only then decide
+- *database* that stores crawled songs (it does not store the songs, only the fingerprint and the metadata). We have to test how performant it is with a relational database and only then decide
 - *load balancing* in front (or proxy, not sure if we want to serve static content, most likely images of thumbnails or something like that)
 - *cache layer* (maybe in front of the database) - I guess top songs cause the majority of traffic at a given period, but it brings complexity, and realistically speaking, we don't need it in this project, but if it would be serious, then it is a must. On the other hand, we have to compare songs against all songs in the database, so I don't know if there is a lot of benefit from caching
 
@@ -87,8 +87,8 @@ This procedure can be created using the following steps:
 
 1. Get the audio file from YouTube or user
    - If it is from YouTube, we use youtube-dl to download the audio
-   - If it is from the user, we will either process it on the client side (if it possible) or just upload it to the server
-2. Convert it to a correct format using FFmpeg
+   - If it is from the user, we will either process it on the client side (if possible) or just upload it to the server
+2. Convert it to the correct format using FFmpeg
 3. Create a spectrogram from the audio file - using some library for that
 4. Create a fingerprint from the spectrogram - this is the most crucial part, some of the processes that we can do:
     - reduce the quality of the spectrogram - this will reduce the size and thus increase the speed of processing and comparisons but also decrease noise to signal ratio, so the algorithm should be more accurate
@@ -114,19 +114,16 @@ Truth be told, we're guessing there is a Python package that does all of this (m
 ### Unanswered questions
 
 - do we need to implement authorization/authentication
-- https or http is fine
 - rate limiting
-- monitoring
-- how should we handle errors
 
 ### What already has been done
 
 - [x] create a repository
-- [x] create a basic structure of the project
+- [x] create a basic structure for the project
 - [x] plan the architecture of the project
 - [x] write a module that takes a song name and artist and returns a list of videos from YouTube
 - [x] create a script that downloads songs from YouTube
-- [x] develop a algorithm that creates a fingerprint from the audio file
+- [x] develop an algorithm that creates a fingerprint from the audio file
 - [x] test the algorithm on a few songs recorded by our phones
 - [ ] CI/CD
 - [ ] write a terraform script that creates all the necessary resources in GCP
@@ -137,4 +134,4 @@ Truth be told, we're guessing there is a Python package that does all of this (m
 - [ ] create a crawler that processes songs
 - [ ] populate the database with songs
 - [ ] create a load balancer
-- [ ] end to end test the application
+- [ ] end-to-end test of the application
