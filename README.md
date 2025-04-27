@@ -45,16 +45,16 @@ We have to deliver a report and a presentation plan. The deadline is *28.04* (**
 - Terraform (working)
 - SLA, SLO, SLI
 
-### Products and services we might use
+### Products and services we use
 
-This section covers only GCP services. The goal of this course is to learn about cloud computing, so we should use `serverless` services and not focus on `VMs`. Ideally, we should configure everything using `Terraform`.
+This section covers only GCP services. The goal of this course is to learn about cloud computing, so we should use `serverless` services and not focus on `VMs`. Ideally, we should configure everything using `Terraform`. (It is a requirement)
 
 - Cloud Run - dockerized applications
 - Cloud Functions - seems like a good fit for processing requests to recognize songs, but I'm not sure yet
 - App Engine - maybe for the simple web interface (I have read a blog about a comparison of this and cloud run, and the difference between cost was like 11$ vs 0.09$ for a month of usage, but there is more to this than meets the eye, and even if that is the case I would use App Engine just for the sake of testing it. It doesn't have to make sense)
-- storage (idk yet what product to use) - maybe MongoDB Atlas, or Cloud SQL
-- queuing (not sure yet) - Cloud Tasks
-- some kind of load balancing or proxy
+- storage - Cloud SQL
+- queuing - Pub/Sub
+- load balancing - Cloud Load Balancing
 
 Well, in theory, everything related to the compute can be done using Cloud Functions, but I'm not sure if it is a good idea. Even if it is, this project is about learning, so we should try to use more than one service to get to know them better and understand their pros and cons.
 
@@ -95,7 +95,7 @@ This procedure can be created using the following steps:
     - process somehow this scatter plot to create a fingerprint
 5. Store the fingerprint in the database with metadata (e.g., song name, artist, etc.)
 
-Truth be told, I'm guessing there is a Python package that does all of this (maybe I'm wrong), but I don't want to use it. On the other hand, I don't want to write it from scratch (because that is not the point), so there is a balance that we have to find.
+Truth be told, We're guessing there is a Python package that does all of this (maybe We're wrong), but We don't want to use it. On the other hand, We don't want to write it from scratch (because that is not the point), so there is a balance that we have to find.
 
 ### What happens when crawling (user wants to add a new song / new database of songs is added)
 
