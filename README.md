@@ -136,3 +136,34 @@ Truth be told, we're guessing there is a Python package that does all of this (m
 - [ ] populate the database with songs
 - [ ] create a load balancer
 - [ ] end-to-end test of the application
+
+### SLA (Service Level Agreement)
+
+| Component | SLA Target | Notes |
+|:---------|:----------|:------|
+| Web User Interface (App Engine) | 99.9% availability per month | Based on App Engine's SLA plus a little head room|
+| Matching Function (Cloud Functions) | 99.9% availability per month | Critical for user experience and availability|
+| Database (Cloud SQL) | 99.95% availability per month | Based on Cloud SQL's SLA |
+| Crawler Service (Cloud Run) | 99.5% availability per month | Non-user facing, batch work |
+
+---
+
+### SLO (Service Level Objective)
+
+| Service Metric | SLO Target | Measurement Interval |
+|:---------------|:-----------|:---------------------|
+| User request success rate (HTTP 2xx) | ≥ 99% | 30 days |
+| Song matching response time (from upload to result) | ≤ 3 seconds | 95% of requests over 30 days |
+| New songs crawled and fingerprinted | ≥ 90% success within 10 minutes | Measured daily |
+
+---
+
+### SLI (Service Level Indicator)
+
+| Indicator | Measurement Method |
+|:---------|:-------------------|
+| Availability of Web UI | % of successful HTTP responses (200 OK) from Load Balancer |
+| Matching response latency | Average and percentile response time from function logs |
+| Database availability | Connection success rate from application |
+| Crawler success rate | % of crawl tasks completed without error |
+| Matching accuracy | User feedback at the end of recognition process |
