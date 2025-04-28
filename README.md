@@ -17,7 +17,7 @@ The architecture of the project is presented in the following diagram:
 
 ### Project requirements
 
-There is an official list of requirements for the project in our group, but it is lackluster, so I will try to create a better one based on lectures and guidelines from previous years.
+There is no official list of requirements for the project as of writing this, so we will try to create one based on lectures and guidelines from previous years.
 
 General requirements:
 
@@ -31,7 +31,7 @@ General requirements:
 - CI/CD
 - Monitoring (optional)
 
-We have to deliver a report and a presentation plan. The deadline is *28.04* (**Not for working application, just for plan of report and presentation**). The report should contain:
+We have to deliver a report and present our ideas. The deadline is *28.04* (**Not for working application, just for the report and presentation**). The report should contain:
 
 - Diagram with (micro)services and their connections  
 - Design APIs (REST, RPC, GraphQL, …)
@@ -45,25 +45,25 @@ We have to deliver a report and a presentation plan. The deadline is *28.04* (**
 - Terraform (working)
 - SLA, SLO, SLI
 
-### Products and services we might use
+### Products and services we use
 
-This section covers only GCP services. The goal of this course is to learn about cloud computing, so we should use `serverless` services and not focus on `VMs`. Ideally, we should configure everything using `Terraform`.
+This section covers only GCP services. The goal of this course is to learn about cloud computing, so we should use `serverless` services and not focus on `VMs`. Ideally, we should configure everything using `Terraform`. (It is a requirement)
 
 - Cloud Run - dockerized applications
-- Cloud Functions - seems like a good fit for processing requests to recognize songs, but I'm not sure yet
+- Cloud Functions - seems like a good fit for processing requests to recognize songs
 - App Engine - maybe for the simple web interface (I have read a blog about a comparison of this and cloud run, and the difference between cost was like 11$ vs 0.09$ for a month of usage, but there is more to this than meets the eye, and even if that is the case I would use App Engine just for the sake of testing it. It doesn't have to make sense)
-- storage (idk yet what product to use) - maybe MongoDB Atlas, or Cloud SQL
-- queuing (not sure yet) - Cloud Tasks
-- some kind of load balancing or proxy
+- storage - Cloud SQL
+- queuing - Pub/Sub
+- load balancing - Cloud Load Balancing
 
-Well, in theory, everything related to the compute can be done using Cloud Functions, but I'm not sure if it is a good idea. Even if it is, this project is about learning, so we should try to use more than one service to get to know them better and understand their pros and cons.
+Well, in theory, everything related to computing can be done using Cloud Functions, but I'm not sure if it is a good idea. Even if it is, this project is about learning, so we should try to use more than one service to get to know them better and understand their pros and cons.
 
 ### Modules
 
 - *algorithm* that finds similarity between audio tracks (core, this will take most of the time)
 - *a web interface* that allows for recording of the audio (or adding it as a file) and transforms it into a simplified spectrogram. Then, query it against the dataset (how do you do it in the browser? You might as well send audio to the server, but it is expensive and ineffective. Also, privacy is a key factor). For sure, FFmpeg will be useful
-- *crawler* that processes songs, so to simplify this step, I would use **static lists of the top 10000 songs of all time and a list of all Taylor Swift songs**, but then it needs to read them (from YouTube, I guess) and preprocess them and add it to the database
-- *database* that stores crawled songs (it does not store the songs, only the fingerprint and the metadata - I think it might be relational db; maybe mongoDB idk how fingerprint looks like)
+- *crawler* that processes songs, as an initial source of songs, we use **static lists of the top 10000 songs of all time and a list of all Taylor Swift songs**, but then it needs to download them (from YouTube), preprocess and save to the database
+- *database* that stores crawled songs (it does not store the songs, only the fingerprint and the metadata). We have to test how performant it is with a relational database and only then decide
 - *load balancing* in front (or proxy, not sure if we want to serve static content, most likely images of thumbnails or something like that)
 - *cache layer* (maybe in front of the database) - I guess top songs cause the majority of traffic at a given period, but it brings complexity, and realistically speaking, we don't need it in this project, but if it would be serious, then it is a must. On the other hand, we have to compare songs against all songs in the database, so I don't know if there is a lot of benefit from caching
 
@@ -85,17 +85,19 @@ From the user's perspective, it seems simple, but in reality, it will be fairly 
 
 This procedure can be created using the following steps:
 
-1. Get the audio file from YouTube (or any other source)
-2. Convert it to a correct format (e.g., mp3, but I'm not sure what is correct for this task) using FFmpeg
-3. Create a spectrogram from the audio file - I would not do it manually, but use some library for that (it probably exists)
-4. Create a fingerprint from the spectrogram - this is the most crucial part, and I have no idea how to do it yet, but from what I read:
-    - you have to reduce the quality of the spectrogram - this will reduce the size and thus increase the speed of processing and comparisons but also decrease noise to signal ratio, so the algorithm should be more accurate
+1. Get the audio file from YouTube or user
+   - If it is from YouTube, we use youtube-dl to download the audio
+   - If it is from the user, we will either process it on the client side (if possible) or just upload it to the server
+2. Convert it to the correct format using FFmpeg
+3. Create a spectrogram from the audio file - using some library for that
+4. Create a fingerprint from the spectrogram - this is the most crucial part, some of the processes that we can do:
+    - reduce the quality of the spectrogram - this will reduce the size and thus increase the speed of processing and comparisons but also decrease noise to signal ratio, so the algorithm should be more accurate
     - reduce the frequency of the spectrogram to those that are used in songs - this will reduce the size of the fingerprint
     - process the spectrogram to create a scatter plot of the most important points
     - process somehow this scatter plot to create a fingerprint
 5. Store the fingerprint in the database with metadata (e.g., song name, artist, etc.)
 
-Truth be told, I'm guessing there is a Python package that does all of this (maybe I'm wrong), but I don't want to use it. On the other hand, I don't want to write it from scratch (because that is not the point), so there is a balance that we have to find.
+Truth be told, we're guessing there is a Python package that does all of this (maybe we're wrong), but we don't want to use it. On the other hand, we don't want to write it from scratch (because that is not the point), so there is a balance that we have to find.
 
 ### What happens when crawling (user wants to add a new song / new database of songs is added)
 
@@ -112,7 +114,56 @@ Truth be told, I'm guessing there is a Python package that does all of this (may
 ### Unanswered questions
 
 - do we need to implement authorization/authentication
-- https or http is fine
 - rate limiting
-- monitoring
-- how should we handle errors
+
+### What already has been done
+
+- [x] create a repository
+- [x] create a basic structure for the project
+- [x] plan the architecture of the project
+- [x] obtain access to GCP, test it
+- [x] write a module that takes a song name and artist and returns a list of videos from YouTube
+- [x] create a script that downloads songs from YouTube
+- [x] develop an algorithm that creates a fingerprint from the audio file
+- [x] test the algorithm on a few songs recorded by our phones
+- [ ] CI/CD
+- [ ] write a terraform script that creates all the necessary resources in GCP
+- [ ] take all the knowledge from notebooks and create a working code out of it
+- [ ] write a tests
+- [ ] create a web interface
+- [ ] create a backend
+- [ ] create a crawler that processes songs
+- [ ] populate the database with songs
+- [ ] create a load balancer
+- [ ] end-to-end test of the application
+
+### SLA (Service Level Agreement)
+
+| Component | SLA Target | Notes |
+|:---------|:----------|:------|
+| Web User Interface (App Engine) | 99.9% availability per month | Based on App Engine's SLA plus a little head room|
+| Matching Function (Cloud Functions) | 99.9% availability per month | Critical for user experience and availability|
+| Database (Cloud SQL) | 99.95% availability per month | Based on Cloud SQL's SLA |
+| Crawler Service (Cloud Run) | 99.5% availability per month | Non-user facing, batch work |
+
+---
+
+### SLO (Service Level Objective)
+
+| Service Metric | SLO Target | Measurement Interval |
+|:---------------|:-----------|:---------------------|
+| User request success rate (HTTP 2xx) | ≥ 99% | 30 days |
+| Song matching response time (from upload to result) | ≤ 3 seconds | 95% of requests over 30 days |
+| New songs crawled and fingerprinted | ≥ 90% success within 10 minutes | Measured daily |
+
+---
+
+### SLI (Service Level Indicator)
+
+| Indicator | Measurement Method |
+|:---------|:-------------------|
+| Availability of Web UI | % of successful HTTP responses (200 OK) from Load Balancer |
+| Matching response latency | Average and percentile response time from function logs |
+| Database availability | Connection success rate from application |
+| Crawler success rate | % of crawl tasks completed without error |
+| Matching accuracy | User feedback at the end of recognition process |
