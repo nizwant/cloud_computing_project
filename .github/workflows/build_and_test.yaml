@@ -47,8 +47,8 @@ jobs:
 
       - name: Run tests
         run: |
-          if [ -d ./../../tests/test_${{ matrix.component }} ]; then
-            pytest ./../../tests/test_${{ matrix.component }}
+          if [ -d ./../../tests/${{ matrix.component }} ]; then
+            pytest ./../../tests/${{ matrix.component }}
           else
             echo "No tests for ${{ matrix.component }}, skipping pytest"
           fi
