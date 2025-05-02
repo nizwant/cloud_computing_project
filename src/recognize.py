@@ -20,7 +20,9 @@ def load_database(song_dir: str, db_type: str = "memory") -> AbstractFingerprint
     return db
 
 
-def recognize_song(query_path: str, db: AbstractFingerprintDB) -> Optional[Tuple[str, int]]:
+def recognize_song(
+    query_path: str, db: AbstractFingerprintDB
+) -> Optional[Tuple[str, int]]:
     audio, sr = load_audio(query_path)
     peaks = get_peaks(audio)
     query_fp = generate_fingerprints(peaks)
