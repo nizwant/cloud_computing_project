@@ -47,14 +47,14 @@ jobs:
 
       - name: Run tests
         run: |
-          if [ -d tests/test_${{ matrix.component }} ]; then
-            pytest tests/test_${{ matrix.component }}
+          if [ -d ./../../tests/test_${{ matrix.component }} ]; then
+            pytest ./../../tests/test_${{ matrix.component }}
           else
             echo "No tests for ${{ matrix.component }}, skipping pytest"
           fi
 
       - name: Run safety
-        run: safety scan --output json --full-report
+        run: safety check --full-report
 
       - name: Run bandit
         run: bandit -r .
