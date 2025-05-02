@@ -126,6 +126,7 @@ Truth be told, we're guessing there is a Python package that does all of this (m
 - [x] create a script that downloads songs from YouTube
 - [x] develop an algorithm that creates a fingerprint from the audio file
 - [x] test the algorithm on a few songs recorded by our phones
+- [x] create a GCP project
 - [ ] CI/CD
 - [ ] write a terraform script that creates all the necessary resources in GCP
 - [ ] take all the knowledge from notebooks and create a working code out of it
