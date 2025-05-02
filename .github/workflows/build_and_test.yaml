@@ -15,6 +15,13 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component: [app_engine, cloud_run, cloud_functions]
+
+    defaults:
+      run:
+        working-directory: src/${{ matrix.component }}
 
     steps:
       - name: Checkout code
@@ -23,39 +30,33 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' 
+          python-version: '3.10'
 
       - name: Cache pip dependencies
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-${{ matrix.component }}-pip-${{ hashFiles('src/${{ matrix.component }}/requirements.txt') }}
           restore-keys: |
-            ${{ runner.os }}-pip-
+            ${{ runner.os }}-${{ matrix.component }}-pip-
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pre-commit safety bandit pyup
+          pip install pre-commit safety bandit pyup pytest
 
       - name: Run pre-commit
         run: pre-commit run --all-files
 
       - name: Run tests
-        run: |
-          if [ -f pytest.ini ] || [ -f tests/ ]; then
-            pip install pytest
-            pytest
-          else
-            echo "No tests found, skipping pytest"
-          fi
+        run: pytest tests/test_${{ matrix.component }}
 
-      - name: Run safety (Python vulnerability check)
+      - name: Run safety
         run: safety check --full-report
 
-      - name: Run bandit (Python security linter)
-        run: bandit -r src/ 
+      - name: Run bandit
+        run: bandit -r .
 
-      - name: Run pyup check for vulnerabilities
+      - name: Run pyup
         run: pyup safety check --full-report
