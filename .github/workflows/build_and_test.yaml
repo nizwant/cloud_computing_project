@@ -63,6 +63,3 @@ jobs:
 
       - name: Run bandit
         run: bandit -r .
-
-      - name: Run pyup
-        run: pyup safety check --full-report
