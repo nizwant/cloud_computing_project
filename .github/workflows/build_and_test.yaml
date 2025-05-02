@@ -3,7 +3,13 @@ name: Build and Test
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'src/**'
+      - 'tests/**'
   pull_request:
+    paths:
+      - 'src/**'
+      - 'tests/**'
 
 jobs:
   build-test:
@@ -48,7 +54,7 @@ jobs:
         run: safety check --full-report
 
       - name: Run bandit (Python security linter)
-        run: bandit -r ./src 
+        run: bandit -r src/ 
 
       - name: Run pyup check for vulnerabilities
         run: pyup safety check --full-report
