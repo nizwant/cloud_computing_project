@@ -1,0 +1,16 @@
+---
+name: Deploy to GCP
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Placeholder, it will be replaced with actual steps later
+      - name: Dummy Step
+        run: echo "This is a dummy deploy workflow."

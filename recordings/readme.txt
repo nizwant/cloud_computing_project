@@ -1,6 +1,6 @@
 We will not store recordings, we won't even
 process them on server (this is "to be decided")
-but for the ease of development and testing purposes, we will store some 
+but for the ease of development and testing purposes, we will store some
 created by us in the "recordings" directory.
 
 
@@ -11,4 +11,4 @@ _cafe_0x is a recording with a phone microphone of song with cafe noises, larger
 _street_0x is a recording with a phone microphone of song with street noises, larger x - louder environment noise
 
 The recordings have different lengths, longer than 5 seconds, majority of them are 5-7 seconds long. The longest is 13 seconds.
-The recordings are in .m4a format. 
+The recordings are in .m4a format.
