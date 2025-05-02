@@ -1,0 +1,17 @@
+name: Deploy to GCP
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Placeholder step, this will be replaced with actual deployment steps later
+      - name: Dummy Step
+        run: echo "This is a dummy deploy workflow. No actual deployment is happening yet."
