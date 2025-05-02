@@ -54,7 +54,7 @@ jobs:
           fi
 
       - name: Run safety
-        run: safety check --full-report
+        run: safety scan --output json --full-report
 
       - name: Run bandit
         run: bandit -r .
