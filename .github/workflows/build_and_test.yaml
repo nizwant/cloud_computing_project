@@ -39,6 +39,11 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.component }}-pip-${{ hashFiles('src/${{ matrix.component }}/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.component }}-pip-
+      
+      - name: List files in directory
+        run: |
+          echo "Listing files in src/${{ matrix.component }}"
+          ls -al src/${{ matrix.component }}
 
       - name: Install dependencies
         run: |
