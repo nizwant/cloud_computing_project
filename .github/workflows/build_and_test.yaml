@@ -48,7 +48,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r src/${{ matrix.component }}/requirements.txt
+          pip install -r requirements.txt
           pip install pre-commit safety bandit pyup pytest
 
       - name: Run pre-commit
@@ -66,7 +66,7 @@ jobs:
         run: safety check --full-report
 
       - name: Run bandit
-        run: bandit -r src/${{ matrix.component }}
+        run: bandit -r .
 
       - name: Run pyup
         run: pyup safety check --full-report
