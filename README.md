@@ -33,7 +33,7 @@ General requirements:
 
 We have to deliver a report and present our ideas. The deadline is *28.04* (**Not for working application, just for the report and presentation**). The report should contain:
 
-- Diagram with (micro)services and their connections  
+- Diagram with (micro)services and their connections
 - Design APIs (REST, RPC, GraphQL, …)
 - Storage characteristics
   - Structured / unstructured
