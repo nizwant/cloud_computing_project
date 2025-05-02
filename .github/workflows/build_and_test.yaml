@@ -2,11 +2,6 @@
 name: Build and Test
 
 on:
-  push:
-    branches: [main, develop]
-    paths:
-      - 'src/**'
-      - 'tests/**'
   pull_request:
     paths:
       - 'src/**'
