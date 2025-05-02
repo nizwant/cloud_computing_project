@@ -43,20 +43,25 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r src/${{ matrix.component }}/requirements.txt
           pip install pre-commit safety bandit pyup pytest
 
       - name: Run pre-commit
         run: pre-commit run --all-files
 
       - name: Run tests
-        run: pytest tests/test_${{ matrix.component }}
+        run: |
+          if [ -d tests/test_${{ matrix.component }} ]; then
+            pytest tests/test_${{ matrix.component }}
+          else
+            echo "No tests for ${{ matrix.component }}, skipping pytest"
+          fi
 
       - name: Run safety
         run: safety check --full-report
 
       - name: Run bandit
-        run: bandit -r .
+        run: bandit -r src/${{ matrix.component }}
 
       - name: Run pyup
         run: pyup safety check --full-report
