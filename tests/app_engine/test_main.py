@@ -6,9 +6,23 @@ sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src/app_engine"))
 )
 
-from main import add
+from main import app
+import pytest
 
 
-def test_add():
-    result = add(2, 3)
-    assert result == 5, f"Expected 5, but got {result}"
+@pytest.fixture
+def client():
+    with app.test_client() as client:
+        yield client
+
+
+def test_index(client):
+    res = client.get("/")
+    assert res.status_code == 200
+    assert b"Welcome to the Home Page" in res.data
+
+
+def test_about(client):
+    res = client.get("/about")
+    assert res.status_code == 200
+    assert b"About This App" in res.data
