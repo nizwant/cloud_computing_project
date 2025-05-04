@@ -3,7 +3,8 @@ name: Deploy to GCP
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -11,6 +12,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Placeholder, it will be replaced with actual steps later
-      - name: Dummy Step
-        run: echo "This is a dummy deploy workflow."
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Set up Google Cloud authentication
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: Set up gcloud CLI
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: cloud-computing-project-458205
+
+    - name: Deploy to App Engine
+      run: |
+        gcloud app deploy src/app_engine/app.yaml --quiet

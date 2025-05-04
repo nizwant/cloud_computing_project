@@ -26,12 +26,12 @@ General requirements:
 - Terraform
 - Large-scale assumption
 - Rather Paas or Serverless than IaaS
-- Queue (optional)
-- Unit tests (optional)
+- Queue
+- Unit tests
 - CI/CD
 - Monitoring (optional)
 
-We have to deliver a report and present our ideas. The deadline is *28.04* (**Not for working application, just for the report and presentation**). The report should contain:
+We have to deliver a report and present our ideas. The deadline is *28.04*. The report should contain:
 
 - Diagram with (micro)services and their connections
 - Design APIs (REST, RPC, GraphQL, …)
