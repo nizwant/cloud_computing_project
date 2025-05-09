@@ -60,3 +60,15 @@ resource "google_pubsub_subscription" "my_subscription" {
   name  = "sub-songs-to-process"
   topic = google_pubsub_topic.my_topic.name
 }
+
+
+resource "google_artifact_registry_repository" "my_simple_repo" {
+  location      = var.region
+  repository_id = "test-repo-name"
+  format        = "DOCKER"
+}
+
+output "repository_url" {
+  description = "The URL to access the Docker repository."
+  value       = "${google_artifact_registry_repository.my_simple_repo.location}-docker.pkg.dev/${google_artifact_registry_repository.my_simple_repo.project}/${google_artifact_registry_repository.my_simple_repo.repository_id}"
+}
