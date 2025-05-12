@@ -1,11 +1,11 @@
+# ------------ App-Engine -------------
 resource "google_app_engine_application" "app" {
   project     = var.project_id
   location_id = var.region_app_engine
 }
 
 
-
-# ------------ CLOUD-SQL -------------
+# ------------ Cloud-SQL -------------
 resource "google_sql_database_instance" "default" {
   name             = "sql-db-instance"
   project          = var.project_id
@@ -45,7 +45,8 @@ resource "google_project_iam_member" "appengine_sql_client" {
   member  = "serviceAccount:${data.google_app_engine_default_service_account.default.email}"
 }
 
-# -------- PUB-SUB -------------------
+
+# -------- Pub-Sub -------------------
 resource "google_pubsub_topic" "my_topic" {
   name = "songs-to-process"
 }
@@ -67,3 +68,6 @@ output "repository_url" {
   description = "The URL to access the Docker repository."
   value       = "${google_artifact_registry_repository.my_simple_repo.location}-docker.pkg.dev/${google_artifact_registry_repository.my_simple_repo.project}/${google_artifact_registry_repository.my_simple_repo.repository_id}"
 }
+
+# -------- Cloud Run -------------------
+# -------- Cloud Functions -------------------
