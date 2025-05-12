@@ -14,17 +14,9 @@ resource "google_sql_database_instance" "default" {
 
   settings {
     tier = var.db_tier
-    ip_configuration {
-      ipv4_enabled    = false
-      private_network = google_compute_network.default.self_link
-    }
   }
 
   deletion_protection = false
-}
-
-resource "google_compute_network" "default" {
-  name = "project-vpc"
 }
 
 resource "google_sql_database" "db" {
