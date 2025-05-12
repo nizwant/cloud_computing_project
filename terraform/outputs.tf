@@ -14,3 +14,8 @@ output "db_password" {
   value     = random_password.db_password.result
   sensitive = true
 }
+
+output "repository_url" {
+  description = "The URL to access the Docker repository."
+  value       = "${google_artifact_registry_repository.my_simple_repo.location}-docker.pkg.dev/${google_artifact_registry_repository.my_simple_repo.project}/${google_artifact_registry_repository.my_simple_repo.repository_id}"
+}

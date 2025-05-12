@@ -64,10 +64,32 @@ resource "google_artifact_registry_repository" "my_simple_repo" {
   format        = "DOCKER"
 }
 
-output "repository_url" {
-  description = "The URL to access the Docker repository."
-  value       = "${google_artifact_registry_repository.my_simple_repo.location}-docker.pkg.dev/${google_artifact_registry_repository.my_simple_repo.project}/${google_artifact_registry_repository.my_simple_repo.repository_id}"
-}
 
 # -------- Cloud Run -------------------
+resource "google_cloud_run_v2_service" "my-cloud-run-service" {
+  name     = "crawler-cloud-run"
+  location = var.region
+
+  template {
+    containers {
+      image = "us-central1-docker.pkg.dev/your-project-id/your-repository/your-image:latest"
+      # Example: us-central1-docker.pkg.dev/my-project/my-repo/my-image:latest
+      ports {
+        container_port = 8080
+      }
+      resources{
+        limits = {
+          cpu    = "1"
+          memory = "1Gi"
+        }
+      }
+    }
+    scaling {
+      max_instance_count = 2
+      min_instance_count = 0
+    }
+  }
+}
+
+
 # -------- Cloud Functions -------------------
