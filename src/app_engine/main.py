@@ -5,12 +5,12 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template("index.html", title="Home", count=5)
+    return render_template("index.html")
 
 
 @app.route("/about")
 def about():
-    return render_template("about.html", title="About")
+    return render_template("about.html")
 
 
 @app.route("/add_song")
@@ -23,6 +23,7 @@ def list_songs():
     return render_template("list_songs.html")
 
 
-# @app.route("/increment", methods=["POST"])
-# def increment():
-#     return redirect(url_for("index"))
+# to remove this
+@app.route("/increment", methods=["POST"])
+def increment():
+    return redirect(url_for("index"))
