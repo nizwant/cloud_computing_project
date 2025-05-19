@@ -8,14 +8,19 @@ def index():
     return render_template("index.html", title="Home", count=5)
 
 
-# @app.route("/about")
-# def about():
-#     return render_template("about.html", title="About")
+@app.route("/about")
+def about():
+    return render_template("about.html", title="About")
 
 
 @app.route("/add_song")
-def about():
+def add_song():
     return render_template("add-song.html")
+
+
+@app.route("/list_song")
+def list_song():
+    return render_template("list-songs.html")
 
 
 @app.route("/increment", methods=["POST"])
