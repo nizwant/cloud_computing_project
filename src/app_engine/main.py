@@ -18,8 +18,8 @@ def add_song():
     return render_template("add-song.html")
 
 
-@app.route("/list_song")
-def list_song():
+@app.route("/list_songs")
+def list_songs():
     return render_template("list-songs.html")
 
 

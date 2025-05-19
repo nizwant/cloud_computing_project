@@ -11,13 +11,14 @@
     <header class="site-header">
         <div class="container">
             <div class="site-title">
-                <a href="index.html">My Shazam Clone</a>
+                <a href="{{ url_for('index') }}">My Shazam Clone</a>
             </div>
             <nav class="main-nav">
                 <ul>
-                    <li><a href="index.html">Search</a></li>
-                    <li><a href="list.html">List All Songs</a></li>
-                    <li><a href="add.html" class="active">Add New Song</a></li>
+                    <li><a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}class="active"{% endif %}>Search</a></li>
+                    <li><a href="{{ url_for('list_songs') }}" {% if request.endpoint == 'list_songs' %}class="active"{% endif %}>List All Songs</a></li>
+                    <li><a href="{{ url_for('add_song') }}" {% if request.endpoint == 'add_song' %}class="active"{% endif %}>Add New Song</a></li>
+                    <li><a href="{{ url_for('about') }}" {% if request.endpoint == 'about' %}class="active"{% endif %}>About Us</a></li>
                 </ul>
             </nav>
         </div>
