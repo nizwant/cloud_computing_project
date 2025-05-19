@@ -1,13 +1,135 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>{{ title }}</title>
-  <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Song - PLACEHOLDER</title>
+     <style>
+        /* Basic styling for readability - you'll want a separate CSS file */
+        body { font-family: sans-serif; margin: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; }
+        form { margin-top: 20px; display: grid; gap: 15px; max-width: 400px; }
+        label { font-weight: bold; }
+        input[type="text"] { width: 100%; padding: 8px; border: 1px solid #ddd; box-sizing: border-box; }
+        button { padding: 10px 15px; background-color: #5cb85c; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #4cae4c; }
+        .message { margin-top: 15px; padding: 10px; border-radius: 4px; }
+        .success { background-color: #dff0d8; color: #3c763d; border: 1px solid #d6e9c6; }
+        .error { background-color: #f2dede; color: #a94442; border: 1px solid #ebccd1; }
+    </style>
 </head>
 <body>
-  <h1>Welcome to the Home Page</h1>
-  <p>This is a Flask app deployed on Google App Engine! THIS IS A TEST</p>
 
-  <a href="/about">Go to About</a>
+    <header>
+        <h1>Add a New Song</h1>
+        <nav>
+            <a href="index.html">Search</a>
+            <a href="list.html">List All Songs</a>
+            <a href="add.html">Add New Song</a>
+        </nav>
+    </header>
+
+    <main>
+        <form id="add-song-form">
+            <div>
+                <label for="title">Song Title:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div>
+                <label for="artist">Artist Name:</label>
+                <input type="text" id="artist" name="artist" required>
+            </div>
+            <button type="submit">Add Song</button>
+        </form>
+
+        <div id="message-area" class="message" style="display: none;">
+            </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 PLACEHOLDER </p>
+    </footer>
+{# 
+    <script>
+        // This is where your JavaScript code will go to:
+        // 1. Get a reference to the form and the message area.
+        // 2. Add an event listener to the form for the 'submit' event.
+        // 3. Inside the event listener:
+        //    a. Prevent the default form submission (which would reload the page).
+        //    b. Get the values from the title and artist input fields.
+        //    c. Create a JavaScript object with the song data ({ title: ..., artist: ... }).
+        //    d. Make a POST request to your REST API (e.g., POST /songs) with the song data in the request body (as JSON).
+        //    e. Handle the response from the API:
+        //       - If successful (e.g., 201 Created), show a success message and maybe clear the form.
+        //       - If there's an error, show an error message.
+
+         const addSongForm = document.getElementById('add-song-form');
+         const messageArea = document.getElementById('message-area');
+
+         addSongForm.addEventListener('submit', async (event) => {
+             event.preventDefault(); // Prevent default form submission
+
+             const titleInput = document.getElementById('title');
+             const artistInput = document.getElementById('artist');
+
+             const songData = {
+                 title: titleInput.value.trim(),
+                 artist: artistInput.value.trim()
+             };
+
+             // Basic validation
+             if (!songData.title || !songData.artist) {
+                 showMessage('Title and Artist are required.', 'error');
+                 return;
+             }
+
+             // Your Cloud Run API URL for adding songs goes here
+             const apiUrl = '/api/songs'; // e.g., 'https://your-api-url.cloudrun.app/songs'
+
+             try {
+                 const response = await fetch(apiUrl, {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json'
+                         // Add API Key header here if you are using them:
+                         // 'X-API-Key': 'YOUR_API_KEY'
+                     },
+                     body: JSON.stringify(songData)
+                 });
+
+                 const result = await response.json(); // API might return the new song object or an error detail
+
+                 if (response.ok) { // Status codes 200-299
+                     showMessage(`Song "${result.title}" by "${result.artist}" added successfully! (ID: ${result.id})`, 'success');
+                     // Optionally clear the form
+                     titleInput.value = '';
+                     artistInput.value = '';
+                 } else { // Handle API errors (e.g., 400, 500)
+                     const errorMessage = result.message || 'An error occurred while adding the song.';
+                     showMessage(`Error: ${errorMessage}`, 'error');
+                 }
+
+             } catch (error) {
+                 console.error('Error submitting form:', error);
+                 showMessage('Network error or failed to connect to API.', 'error');
+             }
+         });
+
+         function showMessage(message, type) {
+             messageArea.textContent = message;
+             messageArea.className = `message ${type}`; // Apply success or error class
+             messageArea.style.display = 'block';
+         }
+
+         // Hide message after a few seconds (optional)
+         function hideMessageAfter(seconds) {
+             setTimeout(() => {
+                 messageArea.style.display = 'none';
+             }, seconds * 1000);
+         }
+
+
+    </script> #}
+
 </body>
 </html>
