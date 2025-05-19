@@ -1,19 +1,16 @@
 h1,
 h2 {
     color: #0056b3;
-    /* A shade of blue often used in tech/cloud */
     margin-top: 25px;
     /* Add some space above headings */
 }
 
 h1 {
     margin-top: 0;
-    /* No extra space for the main title */
 }
 
 a {
     color: #007bff;
-    /* Standard link blue */
     text-decoration: none;
 }
 
@@ -23,7 +20,7 @@ a:hover {
 
 ul {
     list-style: disc;
-    /* Use standard disc bullets for requirements */
+    /* standard disc bullets for requirements */
     padding-left: 20px;
 }
 
@@ -34,13 +31,11 @@ ul {
 }
 
 li {
-    margin-bottom: 8px;
-    /* Slightly less space for requirements */
+    margin-bottom: 6px;
 }
 
 .team-members li {
     margin-bottom: 10px;
-    /* More space for team members */
 }
 
 .team-member a {
@@ -49,15 +44,7 @@ li {
 
 .architecture-diagram {
     display: block;
-    /* Make image a block element */
     max-width: 100%;
-    /* Ensure image is responsive */
     height: auto;
-    /* Maintain aspect ratio */
     margin: 20px auto;
-    /* Center the image and add vertical space */
-    border: 1px solid #ccc;
-    /* Optional: add a subtle border */
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-    /* Optional: add a subtle shadow */
 }
