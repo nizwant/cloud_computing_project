@@ -25,4 +25,4 @@ def test_index(client):
 def test_about(client):
     res = client.get("/about")
     assert res.status_code == 200
-    assert b"About This App" in res.data
+    assert b"About Us" in res.data
