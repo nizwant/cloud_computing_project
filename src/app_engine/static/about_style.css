@@ -1,0 +1,50 @@
+h1,
+h2 {
+    color: #0056b3;
+    margin-top: 25px;
+    /* Add some space above headings */
+}
+
+h1 {
+    margin-top: 0;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+ul {
+    list-style: disc;
+    /* standard disc bullets for requirements */
+    padding-left: 20px;
+}
+
+.team-members ul {
+    list-style: none;
+    /* No bullets for team list */
+    padding: 0;
+}
+
+li {
+    margin-bottom: 6px;
+}
+
+.team-members li {
+    margin-bottom: 10px;
+}
+
+.team-member a {
+    font-weight: bold;
+}
+
+.architecture-diagram {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 20px auto;
+}
