@@ -1,140 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Song - My Shazam Clone</title>
-    <link rel="stylesheet" href="/static/add-song-style.css">
-</head>
-<body>
+{% extends "base_template.html" %}
 
-    <header class="site-header">
-        <div class="container">
-            <div class="site-title">
-                <a href="index.html">My Shazam Clone</a>
-            </div>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="index.html">Search</a></li>
-                    <li><a href="list.html">List All Songs</a></li>
-                    <li><a href="add.html" class="active">Add New Song</a></li>
-                </ul>
-            </nav>
+{% block content %}
+<div class="container">
+    <h1 class="page-title">Add a New Song to the Database</h1>
+
+    <form id="add-song-form" class="add-song-form">
+        <div class="form-group">
+            <label for="title">Song Title:</label>
+            <input type="text" id="title" name="title" required aria-required="true">
         </div>
-    </header>
-
-    <main class="site-main">
-        <div class="container">
-            <h1 class="page-title">Add a New Song to the Database</h1>
-
-            <form id="add-song-form" class="add-song-form">
-                <div class="form-group">
-                    <label for="title">Song Title:</label>
-                    <input type="text" id="title" name="title" required aria-required="true">
-                </div>
-                <div class="form-group">
-                    <label for="artist">Artist Name:</label>
-                    <input type="text" id="artist" name="artist" required aria-required="true">
-                </div>
-
-                <button type="submit">Submit Song</button>
-            </form>
-
-            <div id="message-area" class="message-area" aria-live="polite">
-                </div>
+        <div class="form-group">
+            <label for="artist">Artist Name:</label>
+            <input type="text" id="artist" name="artist" required aria-required="true">
         </div>
-    </main>
 
-    <footer class="site-footer">
-        <div class="container">
-            <p>&copy; <span id="current-year"></span> My Shazam Clone. All rights reserved.</p>
+        <button type="submit">Submit Song</button>
+    </form>
+
+    <div id="message-area" class="message-area" aria-live="polite">
         </div>
-    </footer>
+</div>
 
-    <script>
-        // Your JavaScript for form submission goes here.
-        // It will select the form, add an event listener for 'submit',
-        // prevent the default submission, get input values,
-        // make the POST request to your backend API, and handle the response.
-        // Update the #message-area div based on success or failure.
+<script>
 
-        const addSongForm = document.getElementById('add-song-form');
-        const messageArea = document.getElementById('message-area');
-        const currentYearSpan = document.getElementById('current-year');
+    const addSongForm = document.getElementById('add-song-form');
+    const messageArea = document.getElementById('message-area');
 
-        // Set the current year in the footer
-        currentYearSpan.textContent = new Date().getFullYear();
+    addSongForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevent default form submission
 
+        const titleInput = document.getElementById('title');
+        const artistInput = document.getElementById('artist');
 
-        addSongForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent default form submission
+        const songData = {
+            title: titleInput.value.trim(),
+            artist: artistInput.value.trim()
+        };
 
-            const titleInput = document.getElementById('title');
-            const artistInput = document.getElementById('artist');
-
-            const songData = {
-                title: titleInput.value.trim(),
-                artist: artistInput.value.trim()
-            };
-
-            // Basic validation
-            if (!songData.title || !songData.artist) {
-                showMessage('Title and Artist are required.', 'error');
-                return;
-            }
-
-            // Hide message area and disable button while submitting
-            messageArea.style.display = 'none';
-            const submitButton = addSongForm.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.textContent = 'Submitting...';
-
-
-            // YOUR CLOUD RUN API URL GOES HERE
-            const apiUrl = 'https://your-api-url.cloudrun.app/songs'; // <-- Replace with your actual API endpoint
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                        // If you implemented API key security, add the header:
-                        // 'X-API-Key': 'YOUR_API_KEY_HERE'
-                    },
-                    body: JSON.stringify(songData)
-                });
-
-                const result = await response.json(); // API might return the new song object or error details
-
-                if (response.ok) { // Check for status codes 200-299
-                    showMessage(`Song "${result.title}" by "${result.artist}" added successfully!`, 'success');
-                    // Optionally clear the form fields after success
-                    titleInput.value = '';
-                    artistInput.value = '';
-                    // You might want to redirect the user or offer to add another
-                } else { // Handle API errors (e.g., 400 Bad Request, 500 Internal Server Error)
-                     const errorMessage = result.message || `Error: Status ${response.status}. Could not add song.`;
-                     showMessage(errorMessage, 'error');
-                }
-
-            } catch (error) {
-                console.error('Error submitting form:', error);
-                showMessage('Network error or failed to connect to API.', 'error');
-            } finally {
-                // Re-enable button and restore text regardless of outcome
-                submitButton.disabled = false;
-                submitButton.textContent = 'Submit Song';
-            }
-        });
-
-        function showMessage(message, type) {
-            messageArea.textContent = message;
-            messageArea.className = `message-area ${type}`;
-            messageArea.style.display = 'block';
-            setTimeout(() => { messageArea.style.display = 'none'; }, 5000);
+        // Basic validation
+        if (!songData.title || !songData.artist) {
+            showMessage('Title and Artist are required.', 'error');
+            return;
         }
 
-    </script>
+        // Hide message area and disable button while submitting
+        messageArea.style.display = 'none';
+        const submitButton = addSongForm.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...';
 
-</body>
-</html>
+
+        // YOUR CLOUD RUN API URL GOES HERE
+        const apiUrl = 'https://your-api-url.cloudrun.app/songs'; // <-- Replace with your actual API endpoint
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                    // If you implemented API key security, add the header:
+                    // 'X-API-Key': 'YOUR_API_KEY_HERE'
+                },
+                body: JSON.stringify(songData)
+            });
+
+            const result = await response.json(); // API might return the new song object or error details
+
+            if (response.ok) { // Check for status codes 200-299
+                showMessage(`Song "${result.title}" by "${result.artist}" added successfully!`, 'success');
+                // Optionally clear the form fields after success
+                titleInput.value = '';
+                artistInput.value = '';
+                // You might want to redirect the user or offer to add another
+            } else { // Handle API errors (e.g., 400 Bad Request, 500 Internal Server Error)
+                  const errorMessage = result.message || `Error: Status ${response.status}. Could not add song.`;
+                  showMessage(errorMessage, 'error');
+            }
+
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            showMessage('Network error or failed to connect to API.', 'error');
+        } finally {
+            // Re-enable button and restore text regardless of outcome
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit Song';
+        }
+    });
+
+    function showMessage(message, type) {
+        messageArea.textContent = message;
+        messageArea.className = `message-area ${type}`;
+        messageArea.style.display = 'block';
+        setTimeout(() => { messageArea.style.display = 'none'; }, 5000);
+    }
+
+</script>
+{% endblock %}

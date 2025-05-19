@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Song - My Shazam Clone</title>
+    <link rel="stylesheet" href="/static/add-song-style.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container">
+            <div class="site-title">
+                <a href="index.html">My Shazam Clone</a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Search</a></li>
+                    <li><a href="list.html">List All Songs</a></li>
+                    <li><a href="add.html" class="active">Add New Song</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="site-main">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; <span id="current-year"></span> My Shazam Clone. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const currentYearSpan = document.getElementById('current-year');
+        currentYearSpan.textContent = new Date().getFullYear();
+    </script>
+
+</body>
+</html>
