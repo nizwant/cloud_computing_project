@@ -104,7 +104,7 @@ def list_tracks_helper(app, items_per_page):
                     "album_image_url": (
                         track["album_image_url"]
                         if track["album_image_url"]
-                        else url_for("static", filename="architecture.png")
+                        else url_for("static", filename="no_image.jpg")
                     ),  # Using a local placeholder
                     "release_year": get_release_year(track["album_release_date"]),
                     "duration": format_duration_ms(track["track_duration_ms"]),

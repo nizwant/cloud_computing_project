@@ -21,7 +21,7 @@
                 <img src="{{ track.album_image_url }}"
                      alt="Album art for {{ track.name }}"
                      class="album-art w-20 h-20 md:w-24 md:h-24 rounded-md object-cover flex-shrink-0"
-                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='architecture.png') }}';">
+                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='no_image.jpg') }}';">
 
                 <div class="track-info flex-grow min-w-0"> <h2 class="track-name text-lg md:text-xl font-semibold text-green-300 truncate" title="{{ track.name }}">{{ track.name }}</h2>
                     <p class="artist-year text-sm text-gray-400 truncate" title="{{ track.artists }} &bull; {{ track.release_year }}">
