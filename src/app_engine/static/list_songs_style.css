@@ -1,0 +1,85 @@
+body {
+    font-family: 'Inter', sans-serif;
+    /* Tailwind's bg-gray-900 and text-gray-100 are applied via class,
+       but you can set fallbacks or base styles here if needed */
+}
+
+/* Style for individual track cards */
+.track-card {
+    /* Tailwind classes bg-gray-800, rounded-lg, shadow-lg, p-4, flex, items-center, space-x-4, transition-all, duration-300 are applied in HTML */
+    /* Add custom hover effect if desired beyond Tailwind's capabilities */
+}
+
+.track-card:hover {
+    /* Example: slightly more pronounced shadow or transform if Tailwind's isn't enough */
+    /* transform: translateY(-3px); */
+    /* box-shadow: 0 12px 20px -3px rgba(0,0,0,0.15), 0 5px 8px -3px rgba(0,0,0,0.1); */
+}
+
+/* Album art styling */
+.album-art {
+    /* Tailwind classes w-20 h-20 md:w-24 md:h-24, rounded-md, object-cover, flex-shrink-0 are applied in HTML */
+    border: 1px solid #4A5568;
+}
+
+/* Track information text styling */
+.track-info .track-name {
+    /* Tailwind classes text-lg md:text-xl, font-semibold, text-green-300, truncate are applied in HTML */
+}
+
+.track-info .artist-year {
+    /* Tailwind classes text-sm, text-gray-400, truncate are applied in HTML */
+}
+
+.explicit-badge {
+    /* Tailwind classes text-xs, bg-red-600, text-white, px-2, py-0.5, rounded-full, mt-1, inline-block are applied in HTML */
+}
+
+/* Track duration styling */
+.track-duration p {
+    /* Tailwind classes text-md md:text-lg, font-medium, text-gray-300 are applied in HTML */
+}
+
+/* Pagination navigation styling */
+.pagination-nav {
+    /* Tailwind classes mt-12, flex, flex-col, sm:flex-row, justify-between, items-center, space-y-4, sm:space-y-0 are applied in HTML */
+}
+
+.pagination-info {
+    /* Tailwind classes text-sm, text-gray-400 are applied in HTML */
+}
+
+.pagination-links {
+    /* Tailwind classes inline-flex, items-center, -space-x-px are applied in HTML */
+}
+
+.pagination-button {
+    /* Base styles for pagination buttons are largely handled by Tailwind classes in HTML */
+    /* You can add common styles here if needed */
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+/* Styling for the "no tracks found" message */
+.no-tracks-message {
+    /* Tailwind classes text-center, py-12 are applied in HTML */
+}
+
+.no-tracks-message svg {
+    /* Tailwind classes mx-auto, h-12, w-12, text-gray-500 are applied in HTML */
+}
+
+.no-tracks-message h3 {
+    /* Tailwind classes mt-2, text-xl, font-medium, text-gray-300 are applied in HTML */
+}
+
+.no-tracks-message p {
+    /* Tailwind classes mt-1, text-sm, text-gray-500 are applied in HTML */
+}
+
+/* Footer styling */
+.app-footer {
+    margin-top: 3rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #6b7280;
+}

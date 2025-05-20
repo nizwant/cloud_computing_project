@@ -19,7 +19,7 @@ def client():
 def test_index(client):
     res = client.get("/")
     assert res.status_code == 200
-    assert b"Welcome to the Home Page" in res.data
+    assert b"Discover Music Instantly" in res.data
 
 
 def test_about(client):
