@@ -1,0 +1,220 @@
+/* General Body and Main Content Layout */
+body {
+    font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    /* Modern sans-serif font stack */
+    background-color: #f0f2f5;
+    /* Light grey background consistent with your other pages */
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex-grow: 1;
+    /* Allows main content to take available space */
+    padding: 40px 20px;
+    max-width: 1000px;
+    /* Max width for content, similar to About Us */
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 60px 20px 80px;
+    /* More vertical padding */
+    width: 100%;
+    background: linear-gradient(135deg, #007bff, #5c67f2);
+    /* Modern gradient background */
+    color: #ffffff;
+    border-radius: 15px;
+    /* Rounded corners for the hero section */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    /* Soft shadow */
+    margin-bottom: 60px;
+    /* Space below hero section */
+}
+
+.hero-title {
+    font-size: 3.2em;
+    /* Larger, more impactful title */
+    font-weight: 700;
+    margin-bottom: 15px;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* Subtle text shadow */
+}
+
+.hero-subtitle {
+    font-size: 1.3em;
+    font-weight: 400;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+/* Microphone Container & Icon */
+.microphone-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.microphone-icon {
+    width: 100px;
+    height: 100px;
+    background-color: #00bcd4;
+    /* Accent color for the mic */
+    border-radius: 50%;
+    /* Circular shape */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 20px rgba(0, 188, 212, 0.4);
+    /* Glow effect */
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    z-index: 2;
+    /* Ensure it's above the pulse */
+}
+
+.microphone-icon:hover {
+    transform: scale(1.05);
+    background-color: #00acc1;
+}
+
+.microphone-icon svg {
+    width: 50px;
+    height: 50px;
+    fill: white;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+    /* Shadow for the SVG itself */
+}
+
+/* Pulse Animation for Microphone */
+.microphone-pulse {
+    position: absolute;
+    top: 0px;
+    width: 100px;
+    height: 100px;
+    background-color: rgba(0, 188, 212, 0.4);
+    border-radius: 50%;
+    animation: pulse 2s infinite cubic-bezier(0.66, 0, 0.34, 1);
+    z-index: 1;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Shazam Button */
+.shazam-button {
+    background-color: #f44336;
+    /* Vibrant red for the main action */
+    color: #ffffff;
+    border: none;
+    padding: 15px 35px;
+    border-radius: 50px;
+    /* Pill shape */
+    font-size: 1.2em;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 40px;
+    /* Space between mic and button */
+    box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
+    /* Stronger shadow */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+.shazam-button:hover {
+    background-color: #e53935;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(244, 67, 54, 0.5);
+}
+
+.shazam-button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(244, 67, 54, 0.3);
+}
+
+/* Info Section */
+.info-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    /* Responsive grid */
+    gap: 30px;
+    /* Space between cards */
+    width: 100%;
+    max-width: 900px;
+    /* Max width for info cards */
+    margin-top: 40px;
+}
+
+.info-card {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    /* Softer shadow for cards */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    /* Lift effect on hover */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    /* Enhanced shadow on hover */
+}
+
+.info-card-title {
+    font-size: 1.5em;
+    color: #007bff;
+    /* Primary blue for card titles */
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.info-card p {
+    font-size: 1em;
+    color: #555;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5em;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1em;
+    }
+
+    .shazam-button {
+        font-size: 1.1em;
+        padding: 12px 30px;
+    }
+
+    .info-section {
+        grid-template-columns: 1fr;
+        /* Stack cards on small screens */
+    }
+}

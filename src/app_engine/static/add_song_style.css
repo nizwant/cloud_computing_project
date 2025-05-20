@@ -1,76 +1,102 @@
+/* Page Title Styling */
+.page-title {
+    font-size: 2.4em;
+    color: #065bb5;
+    text-align: center;
+    margin-bottom: 35px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+}
+
+
 /* Form Styling */
 .add-song-form {
-    background-color: var(--white);
-    padding: var(--margin-medium);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    padding: 35px;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
     display: grid;
-    gap: var(--padding-medium);
-    max-width: 500px;
-    /* Limit form width */
+    gap: 22px;
+    max-width: 520px;
     margin: 0 auto;
-    /* Center the form */
 }
 
 .form-group {
-    margin-bottom: var(--padding-medium);
+    margin-bottom: 0;
 }
 
 .form-group label {
     display: block;
-    /* Label on its own line */
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: var(--secondary-color);
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #4a4a4a;
+    font-size: 1.08em;
 }
 
 .form-group input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
+    width: calc(100% - 24px);
+    padding: 13px 12px;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
     box-sizing: border-box;
-    /* Include padding and border in element's total width and height */
-    font-size: 1em;
+    font-size: 1.05em;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fdfdfd;
 }
 
 .form-group input[type="text"]:focus {
-    border-color: var(--primary-color);
+    border-color: #3498db;
     outline: none;
-    /* Remove default outline */
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    /* Add a subtle focus glow */
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    background-color: #ffffff;
 }
 
+/* Submit Button Styling */
 button[type="submit"] {
     display: block;
-    /* Button on its own line */
     width: 100%;
-    /* Full width button */
-    padding: 12px;
-    background-color: var(--success-color);
-    color: var(--white);
+    padding: 16px;
+    background-color: #3498db;
+    color: #ffffff;
     border: none;
-    border-radius: 4px;
-    font-size: 1.1em;
+    border-radius: 8px;
+    font-size: 1.25em;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    margin-top: 30px;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
 }
 
 button[type="submit"]:hover {
-    background-color: #218838;
-    /* Darker green on hover */
+    background-color: #2980b9;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);
+}
+
+button[type="submit"]:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+}
+
+button[type="submit"]:disabled {
+    background-color: #a0a0a0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* Message Area */
 .message-area {
-    margin-top: var(--padding-medium);
-    padding: var(--padding-medium);
-    border-radius: 4px;
+    margin-top: 28px;
+    padding: 16px;
+    border-radius: 8px;
     display: none;
-    /* Hidden by default */
     text-align: center;
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 1.05em;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .message-area.success {

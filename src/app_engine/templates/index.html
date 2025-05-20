@@ -5,8 +5,47 @@
 {% endblock %}
 
 {% block content %}
-  <h1>Welcome to the Home Page</h1>
-  <p>This is a Flask app deployed on Google App Engine! THIS IS A TEST</p>
+<div class="main-content">
+    <section class="hero-section">
+        <h1 class="hero-title">Discover Music Instantly</h1>
+        <p class="hero-subtitle">Tap the microphone to identify any song playing around you.</p>
 
-  <a href="/about">Go to About</a>
+        <div class="microphone-container">
+            <div class="microphone-pulse"></div>
+            <div class="microphone-icon" aria-label="Tap to identify music">
+                <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                  <g>
+                    <g>
+                      <path d="M256,0c-37.702,0-68.267,30.564-68.267,68.267v68.267h136.533V68.267C324.267,30.564,293.702,0,256,0z"></path>
+                    </g>
+                  </g>
+                  <g>
+                    <g>
+                      <path d="M187.733,163.84v68.267c0,37.702,30.564,68.267,68.267,68.267s68.267-30.564,68.267-68.267V163.84H187.733z"></path>
+                    </g>
+                  </g>
+                  <g>
+                    <g>
+                      <path d="M406.187,232.107h-40.96c0,60.228-48.999,109.227-109.227,109.227s-109.227-48.999-109.227-109.227h-40.96
+                        c0,75.866,56.548,138.764,129.707,148.784v90.149h-47.787V512h136.533v-40.96H276.48v-90.149
+                        C349.639,370.871,406.187,307.973,406.187,232.107z"></path>
+                    </g>
+                  </g>
+                </svg>
+            </div>
+            <button class="shazam-button" aria-label="Identify Song">Tap to Shazam!</button>
+        </div>
+    </section>
+
+    <section class="info-section">
+        <div class="info-card">
+            <h3 class="info-card-title">Lightning Fast Identification</h3>
+            <p>Our algorithm recognizes songs in seconds, even in noisy environments, bringing you instant results.</p>
+        </div>
+        <div class="info-card">
+            <h3 class="info-card-title">Listen & Watch</h3>
+            <p>Listen to the complete song, watch its official music video, and get essential details about the track and artist.</p>
+        </div>
+    </section>
+</div>
 {% endblock %}
