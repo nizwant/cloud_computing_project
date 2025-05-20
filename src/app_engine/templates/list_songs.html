@@ -47,7 +47,7 @@
             <ul class="pagination-links inline-flex items-center -space-x-px">
                 <li>
                     <a href="{{ url_for('list_songs', page=current_page - 1) if current_page > 1 else '#' }}"
-                       class="pagination-button prev-button inline-flex items-center justify-center py-2 px-3 ml-0 leading-tight rounded-l-lg 
+                       class="pagination-button prev-button inline-flex items-center justify-center py-2 px-3 ml-0 leading-tight rounded-l-lg
                               {% if current_page == 1 %} bg-gray-700 text-gray-500 cursor-not-allowed
                               {% else %} bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white {% endif %}">
                         <span class="sr-only">Previous</span>
