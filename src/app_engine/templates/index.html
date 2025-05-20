@@ -5,8 +5,31 @@
 {% endblock %}
 
 {% block content %}
-  <h1>Welcome to the Home Page</h1>
-  <p>This is a Flask app deployed on Google App Engine! THIS IS A TEST</p>
+<div class="main-content">
+    <section class="hero-section">
+        <h1 class="hero-title">Discover Music Instantly</h1>
+        <p class="hero-subtitle">Tap the microphone to identify any song playing around you.</p>
 
-  <a href="/about">Go to About</a>
+        <div class="microphone-container">
+            <div class="microphone-pulse"></div>
+            <div class="microphone-icon" aria-label="Tap to identify music">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff">
+                    <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.2-3c0 3.53-2.64 6.44-6.2 6.93V21h3v2H8v-2h3v-3.07c-3.56-.49-6.2-3.4-6.2-6.93h2c0 2.89 2.16 5.23 5 5.72V17h-1v2h4v-2h-1v-3.07c2.84-.49 5-2.83 5-5.72h2z"/>
+                </svg>
+            </div>
+            <button class="shazam-button" aria-label="Identify Song">Tap to Shazam!</button>
+        </div>
+    </section>
+
+    <section class="info-section">
+        <div class="info-card">
+            <h3 class="info-card-title">Lightning Fast Identification</h3>
+            <p>Our algorithm recognizes songs in seconds, even in noisy environments, bringing you instant results.</p>
+        </div>
+        <div class="info-card">
+            <h3 class="info-card-title">Explore & Discover</h3>
+            <p>Dive deep into song details, artist biographies, and seamlessly connect to listen on your favorite platforms.</p>
+        </div>
+    </section>
+</div>
 {% endblock %}
