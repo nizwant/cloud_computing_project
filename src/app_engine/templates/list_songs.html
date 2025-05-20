@@ -46,7 +46,7 @@
             </div>
             <ul class="pagination-links inline-flex items-center -space-x-px">
                 <li>
-                    <a href="{{ url_for('list_tracks', page=current_page - 1) if current_page > 1 else '#' }}"
+                    <a href="{{ url_for('list_songs', page=current_page - 1) if current_page > 1 else '#' }}"
                        class="pagination-button prev-button py-2 px-3 ml-0 leading-tight rounded-l-lg
                               {% if current_page == 1 %} bg-gray-700 text-gray-500 cursor-not-allowed
                               {% else %} bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white {% endif %}">
@@ -62,7 +62,7 @@
 
                 {% if start_page > 1 %}
                     <li>
-                        <a href="{{ url_for('list_tracks', page=1) }}"
+                        <a href="{{ url_for('list_songs', page=1) }}"
                            class="pagination-button page-number-button py-2 px-3 leading-tight bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white">1</a>
                     </li>
                     {% if start_page > 2 %}
@@ -74,7 +74,7 @@
 
                 {% for p in range(start_page, end_page + 1) %}
                 <li>
-                    <a href="{{ url_for('list_tracks', page=p) }}"
+                    <a href="{{ url_for('list_songs', page=p) }}"
                        class="pagination-button page-number-button py-2 px-3 leading-tight
                               {% if p == current_page %} bg-green-500 text-white hover:bg-green-600
                               {% else %} bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white {% endif %}">
@@ -90,13 +90,13 @@
                     </li>
                     {% endif %}
                     <li>
-                        <a href="{{ url_for('list_tracks', page=total_pages) }}"
+                        <a href="{{ url_for('list_songs', page=total_pages) }}"
                            class="pagination-button page-number-button py-2 px-3 leading-tight bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white">{{ total_pages }}</a>
                     </li>
                 {% endif %}
 
                 <li>
-                    <a href="{{ url_for('list_tracks', page=current_page + 1) if current_page < total_pages else '#' }}"
+                    <a href="{{ url_for('list_songs', page=current_page + 1) if current_page < total_pages else '#' }}"
                        class="pagination-button next-button py-2 px-3 leading-tight rounded-r-lg
                               {% if current_page == total_pages %} bg-gray-700 text-gray-500 cursor-not-allowed
                               {% else %} bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white {% endif %}">
