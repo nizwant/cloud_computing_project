@@ -8,7 +8,6 @@ def format_duration_ms(duration_ms):
         seconds = int(total_seconds % 60)
         return f"{minutes:02d}:{seconds:02d}"
     except (ValueError, TypeError):
-        app.logger.warning(f"Could not format duration: {duration_ms}")
         return "N/A"
 
 
@@ -23,8 +22,6 @@ def get_release_year(release_date):
         if year_str.isdigit() and len(year_str) == 4:
             return year_str
         else:
-            app.logger.warning(f"Could not parse year from date string: {release_date}")
             return "N/A"
-    except Exception as e:
-        app.logger.warning(f"Error parsing release year from '{release_date}': {e}")
+    except Exception:
         return "N/A"

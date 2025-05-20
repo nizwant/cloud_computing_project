@@ -67,7 +67,7 @@ def list_tracks_helper(app, items_per_page):
 
         if page > total_pages and total_tracks > 0:
             app.logger.info(
-                f"Requested page {page} is out of bounds ({total_pages} total). Setting to last page."
+                f"Requested page {page} is out of bounds, {total_pages} total. Setting to last page"
             )
             page = total_pages
             offset = (page - 1) * items_per_page
@@ -75,17 +75,17 @@ def list_tracks_helper(app, items_per_page):
         # Using psycopg2.sql for safe query construction
         query = sql.SQL(
             """
-            SELECT 
+            SELECT
                 track_id,
-                track_name, 
-                artist_names, 
-                album_name, 
-                album_release_date, 
-                album_image_url, 
+                track_name,
+                artist_names,
+                album_name,
+                album_release_date,
+                album_image_url,
                 track_duration_ms,
                 explicit,
                 popularity
-            FROM tracks 
+            FROM tracks
             ORDER BY popularity DESC, track_name ASC
             LIMIT %s OFFSET %s;
         """
@@ -127,7 +127,7 @@ def list_tracks_helper(app, items_per_page):
         if conn:
             conn.rollback()
         return (
-            "<h1>500 - Internal Server Error</h1><p>A database error occurred. Please try again later.</p>",
+            "<h1>500 - Internal Server Error</h1><p>A database error occurred.</p>",
             500,
         )
     except Exception as e:
@@ -135,7 +135,7 @@ def list_tracks_helper(app, items_per_page):
         if conn:
             conn.rollback()
         return (
-            "<h1>500 - Internal Server Error</h1><p>A database error occurred. Please try again later.</p>",
+            "<h1>500 - Internal Server Error</h1><p>A database error occurred.</p>",
             500,
         )
     finally:
