@@ -3,7 +3,7 @@
 /* Apply base font family from Google Fonts to the body */
 body {
     font-family: 'Inter', sans-serif;
-    /* Tailwind's bg-gray-900 and text-gray-100 are applied via class, 
+    /* Tailwind's bg-gray-900 and text-gray-100 are applied via class,
        but you can set fallbacks or base styles here if needed */
 }
 
