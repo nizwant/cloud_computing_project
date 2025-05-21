@@ -1,3 +1,6 @@
+from google.cloud import secretmanager
+
+
 def format_duration_ms(duration_ms):
     """Converts duration from milliseconds to MM:SS string format."""
     if duration_ms is None:
@@ -25,3 +28,10 @@ def get_release_year(release_date):
             return "N/A"
     except Exception:
         return "N/A"
+
+
+def get_secret(secret_id, project_id):
+    client = secretmanager.SecretManagerServiceClient()
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
+    response = client.access_secret_version(request={"name": name})
+    return response.payload.data.decode("utf-8")

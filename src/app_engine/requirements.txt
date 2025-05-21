@@ -1,4 +1,4 @@
 flask
 gunicorn
 psycopg2-binary
-python-dotenv
+google-cloud-secret-manager
