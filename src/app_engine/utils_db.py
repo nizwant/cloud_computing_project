@@ -4,15 +4,20 @@ from psycopg2.extras import DictCursor
 from psycopg2 import sql
 from flask import render_template, request, url_for
 import math
+from google.cloud import secretmanager
+
 
 from utils_misc import format_duration_ms, get_release_year, get_secret
 
 
 # --- Database Connection Parameters ---
+client = secretmanager.SecretManagerServiceClient()
 DB_NAME = os.getenv("DB_NAME", "database-instance")
-DB_USER = get_secret("DB_USER", "cloud-computing-project-458205").strip()
-DB_PASSWORD = get_secret("DB_PASSWORD", "cloud-computing-project-458205").strip()
-DB_HOST = get_secret("DB_HOST", "cloud-computing-project-458205").strip()
+DB_USER = get_secret("DB_USER", "cloud-computing-project-458205", client).strip()
+DB_PASSWORD = get_secret(
+    "DB_PASSWORD", "cloud-computing-project-458205", client
+).strip()
+DB_HOST = get_secret("DB_HOST", "cloud-computing-project-458205", client).strip()
 DB_PORT = os.getenv("DB_PORT", "5432")
 
 
