@@ -4,18 +4,15 @@ from psycopg2.extras import DictCursor
 from psycopg2 import sql
 from flask import render_template, request, url_for
 import math
-from dotenv import load_dotenv
 
-from utils_misc import format_duration_ms, get_release_year
+from utils_misc import format_duration_ms, get_release_year, get_secret
 
-
-load_dotenv()
 
 # --- Database Connection Parameters ---
 DB_NAME = os.getenv("DB_NAME", "database-instance")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST")
+DB_USER = get_secret("DB_USER", "cloud-computing-project-458205").strip()
+DB_PASSWORD = get_secret("DB_PASSWORD", "cloud-computing-project-458205").strip()
+DB_HOST = get_secret("DB_HOST", "cloud-computing-project-458205").strip()
 DB_PORT = os.getenv("DB_PORT", "5432")
 
 
