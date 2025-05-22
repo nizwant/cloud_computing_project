@@ -23,6 +23,11 @@ body {
     min-height: 100vh;
 }
 
+.app-icon {
+    width: 24px;
+    height: 24px;
+    filter: brightness(0) invert(1);
+}
 
 .container {
     max-width: 800px;
@@ -42,6 +47,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.site-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .site-title a {
