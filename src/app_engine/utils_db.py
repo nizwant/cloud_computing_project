@@ -2,7 +2,7 @@ import os
 import psycopg2
 from psycopg2.extras import DictCursor
 from psycopg2 import sql
-from flask import render_template, request, url_for, jsonify
+from flask import render_template, request, url_for
 import math
 from google.cloud import secretmanager
 

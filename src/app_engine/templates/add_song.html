@@ -61,7 +61,7 @@
                 body: JSON.stringify(songData)
             });
 
-            const result = await response.json(); 
+            const result = await response.json();
 
             if (response.ok) {
                 showMessage(result.message, result.status);

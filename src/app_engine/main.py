@@ -48,7 +48,7 @@ def push_to_pub_sub():
 
     if check["status"] == "success":
         message_json = json.dumps(data)
-        future = publisher.publish(topic_path, message_json.encode("utf-8"))
+        publisher.publish(topic_path, message_json.encode("utf-8"))
     return jsonify(check), 200
 
 
