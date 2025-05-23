@@ -64,7 +64,7 @@
             const result = await response.json(); 
 
             if (response.ok) {
-                showMessage(`Success, song ${songData.title} by ${songData.artist} will be processed shortly!`, 'success');
+                showMessage(result.message, result.status);
                 titleInput.value = '';
                 artistInput.value = '';
             } else {

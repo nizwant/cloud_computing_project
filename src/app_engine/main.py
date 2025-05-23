@@ -42,10 +42,8 @@ def list_songs():
 @app.route("/push_to_pub_sub", methods=["POST"])
 def push_to_pub_sub():
     data = request.get_json()
-
     title = data.get("title")
     artist = data.get("artist")
-
     check = check_if_song_exists(app, title=title, artist=artist)
 
     if check["status"] == "success":
