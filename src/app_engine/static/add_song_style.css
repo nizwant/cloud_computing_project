@@ -56,7 +56,7 @@ button[type="submit"] {
     display: block;
     width: 100%;
     padding: 16px;
-    background-color: #3498db;
+    background-color: #007bff;
     color: #ffffff;
     border: none;
     border-radius: 8px;
@@ -70,7 +70,7 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #2980b9;
+    background-color: #065bb5;
     transform: translateY(-4px);
     box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);
 }
@@ -109,4 +109,10 @@ button[type="submit"]:disabled {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
+}
+
+.message-area.warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
 }

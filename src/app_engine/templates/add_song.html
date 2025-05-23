@@ -54,29 +54,20 @@
         submitButton.textContent = 'Submitting...';
 
 
-        // YOUR CLOUD RUN API URL GOES HERE
-        const apiUrl = 'https://your-api-url.cloudrun.app/songs'; // <-- Replace with your actual API endpoint
-
         try {
-            const response = await fetch(apiUrl, {
+            const response = await fetch("/push_to_pub_sub", {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                    // If you implemented API key security, add the header:
-                    // 'X-API-Key': 'YOUR_API_KEY_HERE'
-                },
+                headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(songData)
             });
 
-            const result = await response.json(); // API might return the new song object or error details
+            const result = await response.json();
 
-            if (response.ok) { // Check for status codes 200-299
-                showMessage(`Song "${result.title}" by "${result.artist}" added successfully!`, 'success');
-                // Optionally clear the form fields after success
+            if (response.ok) {
+                showMessage(result.message, result.status);
                 titleInput.value = '';
                 artistInput.value = '';
-                // You might want to redirect the user or offer to add another
-            } else { // Handle API errors (e.g., 400 Bad Request, 500 Internal Server Error)
+            } else {
                   const errorMessage = result.message || `Error: Status ${response.status}. Could not add song.`;
                   showMessage(errorMessage, 'error');
             }
@@ -85,7 +76,6 @@
             console.error('Error submitting form:', error);
             showMessage('Network error or failed to connect to API.', 'error');
         } finally {
-            // Re-enable button and restore text regardless of outcome
             submitButton.disabled = false;
             submitButton.textContent = 'Submit Song';
         }
