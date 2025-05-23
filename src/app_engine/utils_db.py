@@ -2,7 +2,7 @@ import os
 import psycopg2
 from psycopg2.extras import DictCursor
 from psycopg2 import sql
-from flask import render_template, request, url_for
+from flask import render_template, request, url_for, jsonify
 import math
 from google.cloud import secretmanager
 
@@ -144,3 +144,36 @@ def list_tracks_helper(app, items_per_page):
         if conn:
             conn.close()
             app.logger.info("Database connection closed.")
+
+
+def check_if_song_exists(app, title, artist):
+    conn = None
+    try:
+        conn = get_db_connection(app)
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT 1 FROM tracks
+            WHERE track_name ILIKE %s AND artist_names ILIKE %s
+        """,
+            (title, artist),
+        )
+
+        result = cur.fetchone()
+        cur.close()
+        conn.close()
+
+        if result:
+            return {
+                "status": "warning",
+                "message": f"Song {title} by {artist} already exists in the database.",
+            }
+
+        return {
+            "status": "success",
+            "message": f"Success, song {title} by {artist} will be processed shortly!",
+        }
+
+    except Exception as e:
+        app.logger.error(f"Error in push_to_pub_sub: {e}")
+        return {"status": "error", "message": "Failed to process request."}
