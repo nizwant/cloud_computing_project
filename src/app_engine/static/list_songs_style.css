@@ -35,9 +35,22 @@ body {
     /* Tailwind classes text-xs, bg-red-600, text-white, px-2, py-0.5, rounded-full, mt-1, inline-block are applied in HTML */
 }
 
-/* Track duration styling */
-.track-duration p {
-    /* Tailwind classes text-md md:text-lg, font-medium, text-gray-300 are applied in HTML */
+.track-duration {
+    text-align: right;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.track-text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #d1d5db;
+}
+
+@media (min-width: 768px) {
+    .track-text {
+        font-size: 1.125rem;
+    }
 }
 
 /* Pagination navigation styling */
