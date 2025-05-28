@@ -152,9 +152,56 @@ header {
 }
 
 .pagination-button {
-    /* Base styles for pagination buttons are largely handled by Tailwind classes in HTML */
-    /* You can add common styles here if needed */
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    padding: 0.5rem 0.75rem;
+    line-height: 1.25;
+    background-color: #4b5563;
+    color: #d1d5db;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.pagination-button:hover {
+    background-color: #6b7280;
+    color: #ffffff;
+}
+
+.page-number-button {
+    border-radius: 0;
+}
+
+.prev-button {
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+}
+
+.next-button {
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+}
+
+.pagination-button.cursor-not-allowed {
+    background-color: #374151;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+.pagination-button.active {
+    background-color: #22c55e;
+    color: #ffffff;
+}
+
+.pagination-button.active:hover {
+    background-color: #16a34a;
+}
+
+.pagination-ellipsis {
+    padding: 0.5rem 0.75rem;
+    line-height: 1.25;
+    background-color: #374151;
+    color: #6b7280;
 }
 
 /* Styling for the "no tracks found" message */
