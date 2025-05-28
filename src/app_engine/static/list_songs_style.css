@@ -5,7 +5,7 @@ body {
     min-height: 100vh;
 }
 
-.container {
+.custom-container {
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -15,12 +15,42 @@ body {
     padding-bottom: 2rem;
 }
 
+@media (min-width: 640px) {
+    .custom-container {
+        max-width: 640px;
+    }
+}
+
+@media (min-width: 768px) {
+    .custom-container {
+        max-width: 768px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .custom-container {
+        max-width: 1024px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .custom-container {
+        max-width: 1280px;
+    }
+}
+
+@media (min-width: 1536px) {
+    .custom-container {
+        max-width: 1536px;
+    }
+}
+
 header {
     margin-bottom: 2rem;
     text-align: center;
 }
 
-.header-title {
+.custom-header-title {
     font-size: 2.25rem;
     font-weight: 700;
     color: #4ade80;
@@ -33,7 +63,7 @@ header {
 }
 
 /* Style for individual track cards */
-.track-card {
+.custom-track-card {
     background-color: #1f2937;
     border-radius: 0.5rem;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
@@ -142,6 +172,10 @@ header {
     color: #9ca3af;
 }
 
+.pagination-count {
+    font-weight: 500;
+}
+
 .pagination-links {
     display: inline-flex;
     align-items: center;
@@ -202,6 +236,11 @@ header {
     line-height: 1.25;
     background-color: #374151;
     color: #6b7280;
+}
+
+.pagination-icon {
+    width: 20px;
+    height: 20px;
 }
 
 /* Styling for the "no tracks found" message */

@@ -9,14 +9,14 @@
     <link rel="stylesheet" href="/static/list_songs_style.css">
 </head>
 <body>
-    <div class="container">
+    <div class="custom-container">
         <header>
-            <h1 class="header-title">Songs that we are able to match</h1>
+            <h1 class="custom-header-title">Songs that we are able to match</h1>
         </header>
 
         {% if tracks %}
         <div class="custom-grid"> {% for track in tracks %}
-            <div class="track-card">
+            <div class="custom-track-card">
                 <img src="{{ track.album_image_url }}"
                      alt="Album art for {{ track.name }}"
                      class="album-art"
@@ -41,14 +41,14 @@
         {% if total_pages > 1 %}
         <nav class="pagination-nav" aria-label="Pagination">
             <div class="pagination-info">
-                Showing <span class="font-medium">{{ tracks | length }}</span> of <span class="font-medium">{{ total_tracks }}</span> results
+                Showing <span class="pagination-count">{{ tracks | length }}</span> of <span class="pagination-count">{{ total_tracks }}</span> results
             </div>
             <ul class="pagination-links">
                 <li>
                     <a href="{{ url_for('list_songs', page=current_page - 1) if current_page > 1 else '#' }}"
                     class="pagination-button prev-button {% if current_page == 1 %}cursor-not-allowed{% endif %} {% if current_page == 1 %} {% else %} {% endif %}">
                         <span class="sr-only">Previous</span>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="pagination-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                         </svg>
                     </a>
@@ -97,7 +97,7 @@
                     <a href="{{ url_for('list_songs', page=current_page + 1) if current_page < total_pages else '#' }}"
                     class="pagination-button next-button {% if current_page == total_pages %}cursor-not-allowed{% endif %}">
                         <span class="sr-only">Next</span>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="pagination-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                         </svg>
                     </a>
