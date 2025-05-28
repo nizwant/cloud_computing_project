@@ -16,14 +16,14 @@
 
         {% if tracks %}
         <div class="grid grid-cols-1 gap-6"> {% for track in tracks %}
-            <div class="track-card bg-gray-800 rounded-lg shadow-lg p-4 flex items-center space-x-4 transition-all duration-300">
+            <div class="track-card">
                 <img src="{{ track.album_image_url }}"
                      alt="Album art for {{ track.name }}"
-                     class="album-art w-20 h-20 md:w-24 md:h-24 rounded-md object-cover flex-shrink-0"
+                     class="album-art"
                      onerror="this.onerror=null; this.src='{{ url_for('static', filename='no_image.jpg') }}';">
 
-                <div class="track-info flex-grow min-w-0"> <h2 class="track-name text-lg md:text-xl font-semibold text-green-300 truncate" title="{{ track.name }}">{{ track.name }}</h2>
-                    <p class="artist-year text-sm text-gray-400 truncate" title="{{ track.artists }} &bull; {{ track.release_year }}">
+                <div class="track-info flex-grow min-w-0"> <h2 class="track-name" title="{{ track.name }}">{{ track.name }}</h2>
+                    <p class="artist-year" title="{{ track.artists }} &bull; {{ track.release_year }}">
                         {{ track.artists }} &bull; {{ track.release_year }}
                     </p>
                      {% if track.explicit %}
