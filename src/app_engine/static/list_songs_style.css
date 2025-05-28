@@ -169,7 +169,7 @@ header {
 
 .pagination-info {
     font-size: 0.875rem;
-    color: #9ca3af;
+    color: #081f6b;
 }
 
 .pagination-count {
@@ -267,14 +267,6 @@ header {
 
 .no-tracks-message p {
     margin-top: 0.25rem;
-    font-size: 0.875rem;
-    color: #6b7280;
-}
-
-/* Footer styling */
-.app-footer {
-    margin-top: 3rem;
-    text-align: center;
     font-size: 0.875rem;
     color: #6b7280;
 }
