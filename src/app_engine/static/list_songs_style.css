@@ -5,6 +5,16 @@ body {
     min-height: 100vh;
 }
 
+.container {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
 header {
     margin-bottom: 2rem;
     text-align: center;
@@ -14,6 +24,12 @@ header {
     font-size: 2.25rem;
     font-weight: 700;
     color: #4ade80;
+}
+
+.custom-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
 }
 
 /* Style for individual track cards */
@@ -47,6 +63,11 @@ header {
     }
 }
 
+.track-info {
+    flex-grow: 1;
+    min-width: 0;
+}
+
 /* Track information text styling */
 .track-name {
     font-size: 1.125rem;
@@ -63,7 +84,7 @@ header {
     }
 }
 
-.track-info .artist-year {
+.artist-year {
     font-size: 0.875rem;
     color: #9ca3af;
     overflow: hidden;
@@ -101,15 +122,33 @@ header {
 
 /* Pagination navigation styling */
 .pagination-nav {
-    /* Tailwind classes mt-12, flex, flex-col, sm:flex-row, justify-between, items-center, space-y-4, sm:space-y-0 are applied in HTML */
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .pagination-nav {
+        flex-direction: row;
+        gap: 0;
+    }
 }
 
 .pagination-info {
-    /* Tailwind classes text-sm, text-gray-400 are applied in HTML */
+    font-size: 0.875rem;
+    color: #9ca3af;
 }
 
 .pagination-links {
-    /* Tailwind classes inline-flex, items-center, -space-x-px are applied in HTML */
+    display: inline-flex;
+    align-items: center;
+}
+
+.pagination-links>*:not(:first-child) {
+    margin-left: -1px;
 }
 
 .pagination-button {
@@ -120,19 +159,30 @@ header {
 
 /* Styling for the "no tracks found" message */
 .no-tracks-message {
-    /* Tailwind classes text-center, py-12 are applied in HTML */
+    text-align: center;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
 }
 
 .no-tracks-message svg {
-    /* Tailwind classes mx-auto, h-12, w-12, text-gray-500 are applied in HTML */
+    margin-left: auto;
+    margin-right: auto;
+    height: 3rem;
+    width: 3rem;
+    color: #6b7280;
 }
 
 .no-tracks-message h3 {
-    /* Tailwind classes mt-2, text-xl, font-medium, text-gray-300 are applied in HTML */
+    margin-top: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #d1d5db;
 }
 
 .no-tracks-message p {
-    /* Tailwind classes mt-1, text-sm, text-gray-500 are applied in HTML */
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #6b7280;
 }
 
 /* Footer styling */
