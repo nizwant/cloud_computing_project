@@ -8,11 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/list_songs_style.css">
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen">
+<body>
     <div class="container mx-auto px-4 py-8">
-        <header class="mb-8 text-center">
-            <h1 class="text-4xl font-bold text-green-400">My Spotify Tracks</h1>
-            <p class="text-gray-400">Browse your curated collection</p>
+        <header>
+            <h1 class="header-title">Songs that we are able to match</h1>
         </header>
 
         {% if tracks %}
@@ -28,7 +27,7 @@
                         {{ track.artists }} &bull; {{ track.release_year }}
                     </p>
                      {% if track.explicit %}
-                        <span class="explicit-badge text-xs bg-red-600 text-white px-2 py-0.5 rounded-full mt-1 inline-block">Explicit</span>
+                        <span class="explicit-badge">Explicit</span>
                     {% endif %}
                 </div>
 

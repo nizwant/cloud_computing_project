@@ -1,7 +1,19 @@
 body {
     font-family: 'Inter', sans-serif;
-    /* Tailwind's bg-gray-900 and text-gray-100 are applied via class,
-       but you can set fallbacks or base styles here if needed */
+    background-color: #111827;
+    color: #f3f4f6;
+    min-height: 100vh;
+}
+
+header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.header-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #4ade80;
 }
 
 /* Style for individual track cards */
@@ -32,7 +44,13 @@ body {
 }
 
 .explicit-badge {
-    /* Tailwind classes text-xs, bg-red-600, text-white, px-2, py-0.5, rounded-full, mt-1, inline-block are applied in HTML */
+    font-size: 0.75rem;
+    background-color: #dc2626;
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    margin-top: 0.25rem;
+    display: inline-block;
 }
 
 .track-duration {
