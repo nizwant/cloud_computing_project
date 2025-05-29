@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify Tracks</title>
+{% extends "base_template.html" %}
+
+{% block style %}
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/list_songs_style.css">
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
     <div class="custom-container">
         <header>
             <h1 class="custom-header-title">Songs that we are able to match</h1>
@@ -118,5 +116,4 @@
         </div>
         {% endif %}
     </div>
-    </body>
-</html>
+{% endblock %}
