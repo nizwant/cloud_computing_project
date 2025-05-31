@@ -2,7 +2,6 @@ h1,
 h2 {
     color: #0056b3;
     margin-top: 25px;
-    /* Add some space above headings */
 }
 
 .site-main {
@@ -26,13 +25,11 @@ h1 {
 
 ul {
     list-style: disc;
-    /* standard disc bullets for requirements */
     padding-left: 20px;
 }
 
 .team-members ul {
     list-style: none;
-    /* No bullets for team list */
     padding: 0;
 }
 

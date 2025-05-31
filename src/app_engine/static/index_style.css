@@ -50,18 +50,14 @@
     width: 100px;
     height: 100px;
     background-color: #00bcd4;
-    /* Accent color for the mic */
     border-radius: 50%;
-    /* Circular shape */
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 5px 20px rgba(0, 188, 212, 0.4);
-    /* Glow effect */
     cursor: pointer;
     transition: transform 0.3s ease, background-color 0.3s ease;
     z-index: 2;
-    /* Ensure it's above the pulse */
 }
 
 .microphone-icon:hover {
