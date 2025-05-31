@@ -50,18 +50,14 @@
     width: 100px;
     height: 100px;
     background-color: #00bcd4;
-    /* Accent color for the mic */
     border-radius: 50%;
-    /* Circular shape */
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 5px 20px rgba(0, 188, 212, 0.4);
-    /* Glow effect */
     cursor: pointer;
     transition: transform 0.3s ease, background-color 0.3s ease;
     z-index: 2;
-    /* Ensure it's above the pulse */
 }
 
 .microphone-icon:hover {
@@ -74,7 +70,6 @@
     height: 50px;
     fill: white;
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
-    /* Shadow for the SVG itself */
 }
 
 /* Pulse Animation for Microphone */
@@ -104,19 +99,15 @@
 /* Shazam Button */
 .shazam-button {
     background-color: #f44336;
-    /* Vibrant red for the main action */
     color: #ffffff;
     border: none;
     padding: 15px 35px;
     border-radius: 50px;
-    /* Pill shape */
     font-size: 1.2em;
     font-weight: 700;
     cursor: pointer;
     margin-top: 40px;
-    /* Space between mic and button */
     box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
-    /* Stronger shadow */
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     letter-spacing: 0.5px;
 }
@@ -136,13 +127,21 @@
 .info-section {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    /* Responsive grid */
     gap: 30px;
-    /* Space between cards */
     width: 100%;
     max-width: 900px;
-    /* Max width for info cards */
     margin-top: 40px;
+}
+
+.site-main {
+    padding: var(--margin-medium) 0;
+    flex-grow: 1;
+    line-height: 1.6;
+    margin: 20px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #333;
 }
 
 .info-card {
@@ -150,22 +149,18 @@
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-    /* Softer shadow for cards */
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .info-card:hover {
     transform: translateY(-5px);
-    /* Lift effect on hover */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-    /* Enhanced shadow on hover */
 }
 
 .info-card-title {
     font-size: 1.5em;
     color: #007bff;
-    /* Primary blue for card titles */
     margin-bottom: 15px;
     font-weight: 600;
 }
@@ -192,6 +187,5 @@
 
     .info-section {
         grid-template-columns: 1fr;
-        /* Stack cards on small screens */
     }
 }
