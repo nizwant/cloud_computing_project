@@ -30,6 +30,7 @@ General requirements:
 - Unit tests
 - CI/CD
 - Monitoring (optional)
+- Secure secret handling
 
 We have to deliver a report and present our ideas. The deadline is *28.04*. The report should contain:
 
