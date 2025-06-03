@@ -30,10 +30,19 @@
 }
 
 .hero-subtitle {
-    font-size: 1.3em;
+    max-width: 400px;
+    font-size: 1.5em;
     font-weight: 400;
-    margin-bottom: 40px;
+    margin-bottom: 0px;
     opacity: 0.9;
+}
+
+.or-subtitle {
+    font-size: 1.5em;
+    font-weight: 400;
+    margin-bottom: 0px;
+    margin-top: 15px;
+    opacity: 0.6;
 }
 
 /* Microphone Container & Icon */
@@ -98,7 +107,7 @@
 
 /* Shazam Button */
 .shazam-button {
-    background-color: #f44336;
+    background-color: #d04238;
     color: #ffffff;
     border: none;
     padding: 15px 35px;
@@ -106,14 +115,14 @@
     font-size: 1.2em;
     font-weight: 700;
     cursor: pointer;
-    margin-top: 40px;
+    margin-top: 20px;
     box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     letter-spacing: 0.5px;
 }
 
 .shazam-button:hover {
-    background-color: #e53935;
+    background-color: #c63432;
     transform: translateY(-3px);
     box-shadow: 0 12px 30px rgba(244, 67, 54, 0.5);
 }

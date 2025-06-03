@@ -15,8 +15,6 @@ app.logger.setLevel(logging.INFO)
 
 publisher = pubsub_v1.PublisherClient()
 topic_path = publisher.topic_path("cloud-computing-project-458205", "songs-to-process")
-# --- Parameters ---
-ITEMS_PER_PAGE = 10  # Number of tracks to display per page
 
 
 @app.route("/")
@@ -36,7 +34,7 @@ def add_song():
 
 @app.route("/list_songs/")
 def list_songs():
-    return list_tracks_helper(app=app, items_per_page=ITEMS_PER_PAGE)
+    return list_tracks_helper(app=app)
 
 
 @app.route("/push_to_pub_sub", methods=["POST"])
