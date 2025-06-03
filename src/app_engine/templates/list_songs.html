@@ -12,7 +12,7 @@
         </header>
 
         <div class="search-filter-sort-section">
-            <form action="{{ url_for('list_songs') }}" method="get" class="search-form">
+            <form action="{{ url_for('list_songs') }}" method="get" class="search-form" id="filter-form">
                 <div class="search-input-group">
                     <input type="text" name="query" placeholder="Search by title or artist..."
                         value="{{ request.args.get('query', '') }}" class="search-input">
@@ -41,15 +41,29 @@
                     </div>
 
                     <div class="tags-filter">
-                        <label for="tags">Filter by genres:</label>
-                        <select name="tags" id="tags" multiple onchange="this.form.submit()">
-                            {% for genre in all_genres %}
-                                <option value="{{ genre.genre_name }}"
-                                    {% if genre.genre_name in selected_genres %}selected{% endif %}>
-                                    {{ genre.genre_name }}
-                                </option>
-                            {% endfor %}
-                        </select>
+                        <label>Filter by genres:</label>
+                        <div class="multi-select-dropdown">
+                            <button type="button" class="dropdown-toggle" id="genreDropdownToggle" aria-haspopup="true" aria-expanded="false">
+                                <span id="selectedGenreText">
+                                    {% if selected_genres %}
+                                        {{ selected_genres | join(', ') }}
+                                    {% else %}
+                                        All Genres
+                                    {% endif %}
+                                </span>
+                                <span class="dropdown-arrow">&#9660;</span> {# Down arrow character #}
+                            </button>
+                            <div class="genre-checkbox-list" id="genreCheckboxList">
+                                <button type="button" class="clear-genres-button" onclick="clearGenreSelections();">Clear Genres</button>
+                                {% for genre in all_genres %}
+                                    <label class="genre-checkbox-item">
+                                        <input type="checkbox" name="tags" value="{{ genre.genre_name }}"
+                                            {% if genre.genre_name in selected_genres %}checked{% endif %} onchange="updateGenreSelectionText();">
+                                        <span>{{ genre.genre_name }}</span>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
 
                     <div class="items-per-page-dropdown">
@@ -172,9 +186,67 @@
             </svg>
             <h3>No tracks found</h3>
             <p>
-                It looks like there's no data in the database, or we couldn't fetch it.
+                It looks like there's no data in the database with those parameters, or we couldn't fetch it.
             </p>
         </div>
         {% endif %}
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownToggle = document.getElementById('genreDropdownToggle');
+            const checkboxList = document.getElementById('genreCheckboxList');
+            const form = document.getElementById('filter-form');
+            const checkboxes = checkboxList.querySelectorAll('input[type="checkbox"]');
+
+            // Function to update the text displayed on the dropdown button
+            window.updateGenreSelectionText = function() {
+                const selected = Array.from(checkboxes)
+                                      .filter(checkbox => checkbox.checked)
+                                      .map(checkbox => checkbox.value);
+                const selectedTextSpan = document.getElementById('selectedGenreText');
+
+                if (selected.length === 0) {
+                    selectedTextSpan.textContent = "All Genres";
+                } else if (selected.length <= 2) { // Show up to 2 selected genres
+                    selectedTextSpan.textContent = selected.join(', ');
+                } else { // Show count if more than 2
+                    selectedTextSpan.textContent = `${selected.length} Genres Selected`;
+                }
+            }
+
+            // Toggle dropdown visibility
+            dropdownToggle.addEventListener('click', function() {
+                checkboxList.classList.toggle('show');
+                this.setAttribute('aria-expanded', checkboxList.classList.contains('show'));
+            });
+
+            // Close dropdown if clicked outside
+            document.addEventListener('click', function(event) {
+                if (!dropdownToggle.contains(event.target) && !checkboxList.contains(event.target)) {
+                    checkboxList.classList.remove('show');
+                    dropdownToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Handle "Clear Genres" button
+            window.clearGenreSelections = function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                updateGenreSelectionText(); // Update text immediately
+                form.submit(); // Submit the form to apply changes
+            }
+
+            // Initial text update on page load
+            updateGenreSelectionText();
+
+            // When a checkbox is changed, re-submit the form
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    form.submit();
+                });
+            });
+        });
+    </script>
 {% endblock %}
