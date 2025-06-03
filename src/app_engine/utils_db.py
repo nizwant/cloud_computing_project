@@ -93,7 +93,11 @@ def list_tracks_helper(app, items_per_page_default=10):
         needs_distinct_on = False
         if selected_genres:
             from_clause = sql.SQL(
-                "FROM tracks t JOIN track_genres tg ON t.track_id = tg.track_id JOIN genres g ON tg.genre_id = g.genre_id"
+                """
+                FROM tracks t
+                JOIN track_genres tg ON t.track_id = tg.track_id
+                JOIN genres g ON tg.genre_id = g.genre_id
+                """
             )
             where_clauses.append("g.genre_name = ANY(%s)")
             query_params.append(selected_genres)
