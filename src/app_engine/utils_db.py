@@ -41,6 +41,17 @@ def get_db_connection(app):
         raise
 
 
+def get_all_genres(app, cursor):
+    """Fetches all unique genre names from the database."""
+    try:
+        cursor.execute("SELECT genre_name FROM genres ORDER BY genre_name ASC;")
+        genres = cursor.fetchall()
+        return genres
+    except psycopg2.Error as e:
+        app.logger.error(f"Error fetching genres: {e}")
+        return []
+
+
 def list_tracks_helper(app, items_per_page_default=10):
     """Displays a paginated, searchable, sortable, and filterable list of tracks."""
     conn = None
@@ -48,11 +59,15 @@ def list_tracks_helper(app, items_per_page_default=10):
         conn = get_db_connection(app)
         cursor = conn.cursor()
 
+        # Get all genres for the dropdown
+        all_genres = get_all_genres(app, cursor)
+
         # Get query parameters
         page = request.args.get("page", 1, type=int)
         search_query = request.args.get("query", "").strip()
         sort_by = request.args.get("sort_by", "popularity_desc")
-        tags_filter = request.args.get("tags", "").strip()
+        # Use request.args.getlist for multiple selected values
+        selected_genres = request.args.getlist("tags")
         items_per_page = request.args.get(
             "items_per_page", items_per_page_default, type=int
         )
@@ -64,32 +79,29 @@ def list_tracks_helper(app, items_per_page_default=10):
 
         app.logger.info(
             f"Request for page: {page}, query: '{search_query}', sort_by: '{sort_by}', "
-            f"tags: '{tags_filter}', items_per_page: {items_per_page}"
+            f"selected_genres: '{selected_genres}', items_per_page: {items_per_page}"
         )
 
         # Build SQL query dynamically
         where_clauses = []
         query_params = []
 
-        if search_query:
-            where_clauses.append("(track_name ILIKE %s OR artist_names ILIKE %s)")
-            query_params.extend([f"%{search_query}%", f"%{search_query}%"])
+        # Base query to fetch tracks
+        from_clause = sql.SQL("FROM tracks t")
 
-        if tags_filter:
-            # Assuming 'tags' is a comma-separated string in the URL
-            # and 'track_tags' is a text array or similar in your DB
-            # For simplicity, let's assume `track_tags` is a TEXT field in the DB
-            # and we search for any of the provided tags.
-            # You might need to adjust this based on how tags are stored in your DB.
-            tags_list = [tag.strip() for tag in tags_filter.split(",") if tag.strip()]
-            if tags_list:
-                tag_conditions = []
-                for tag in tags_list:
-                    tag_conditions.append(
-                        "track_tags ILIKE %s"
-                    )  # Assuming track_tags is a TEXT field
-                    query_params.append(f"%{tag}%")
-                where_clauses.append(f"({' OR '.join(tag_conditions)})")
+        # Determine if DISTINCT ON is needed
+        needs_distinct_on = False
+        if selected_genres:
+            from_clause = sql.SQL(
+                "FROM tracks t JOIN track_genres tg ON t.track_id = tg.track_id JOIN genres g ON tg.genre_id = g.genre_id"
+            )
+            where_clauses.append("g.genre_name = ANY(%s)")
+            query_params.append(selected_genres)
+            needs_distinct_on = True  # Set to True if genre filtering is active
+
+        if search_query:
+            where_clauses.append("(t.track_name ILIKE %s OR t.artist_names ILIKE %s)")
+            query_params.extend([f"%{search_query}%", f"%{search_query}%"])
 
         # Build WHERE clause
         where_sql = sql.SQL("")
@@ -99,26 +111,43 @@ def list_tracks_helper(app, items_per_page_default=10):
             )
 
         # Build ORDER BY clause
-        order_by_sql = sql.SQL("")
+        order_by_parts = []
+        if needs_distinct_on:
+            # When DISTINCT ON is used, track_id must be the first in ORDER BY
+            order_by_parts.append(
+                sql.SQL("t.track_id ASC")
+            )  # Arbitrarily pick an order for track_id itself
+
         if sort_by == "popularity_desc":
-            order_by_sql = sql.SQL(" ORDER BY popularity DESC, track_name ASC")
+            order_by_parts.append(sql.SQL("t.popularity DESC"))
+            order_by_parts.append(sql.SQL("t.track_name ASC"))
         elif sort_by == "popularity_asc":
-            order_by_sql = sql.SQL(" ORDER BY popularity ASC, track_name ASC")
+            order_by_parts.append(sql.SQL("t.popularity ASC"))
+            order_by_parts.append(sql.SQL("t.track_name ASC"))
         elif sort_by == "track_name_asc":
-            order_by_sql = sql.SQL(" ORDER BY track_name ASC")
+            order_by_parts.append(sql.SQL("t.track_name ASC"))
         elif sort_by == "track_name_desc":
-            order_by_sql = sql.SQL(" ORDER BY track_name DESC")
+            order_by_parts.append(sql.SQL("t.track_name DESC"))
         elif sort_by == "album_release_date_desc":
-            order_by_sql = sql.SQL(" ORDER BY album_release_date DESC, track_name ASC")
+            order_by_parts.append(sql.SQL("t.album_release_date DESC"))
+            order_by_parts.append(sql.SQL("t.track_name ASC"))
         elif sort_by == "album_release_date_asc":
-            order_by_sql = sql.SQL(" ORDER BY album_release_date ASC, track_name ASC")
-        else:
-            order_by_sql = sql.SQL(
-                " ORDER BY popularity DESC, track_name ASC"
-            )  # Default
+            order_by_parts.append(sql.SQL("t.album_release_date ASC"))
+            order_by_parts.append(sql.SQL("t.track_name ASC"))
+        else:  # Default sort
+            order_by_parts.append(sql.SQL("t.popularity DESC"))
+            order_by_parts.append(sql.SQL("t.track_name ASC"))
+
+        order_by_sql = sql.SQL(" ORDER BY ") + sql.SQL(", ").join(order_by_parts)
 
         # Count total tracks matching the criteria
-        count_query = sql.SQL("SELECT COUNT(*) FROM tracks") + where_sql + sql.SQL(";")
+        count_query_select = (
+            sql.SQL("SELECT COUNT(DISTINCT t.track_id)")
+            if needs_distinct_on
+            else sql.SQL("SELECT COUNT(*)")
+        )
+        count_query = count_query_select + from_clause + where_sql + sql.SQL(";")
+
         cursor.execute(count_query, tuple(query_params))
         total_tracks_result = cursor.fetchone()
         total_tracks = total_tracks_result[0] if total_tracks_result else 0
@@ -139,24 +168,34 @@ def list_tracks_helper(app, items_per_page_default=10):
             offset = 0
 
         # Main query for fetching tracks
+        select_distinct_clause = (
+            sql.SQL("SELECT DISTINCT ON (t.track_id)")
+            if needs_distinct_on
+            else sql.SQL("SELECT")
+        )
         query = sql.SQL(
             """
-            SELECT
-                track_id,
-                track_name,
-                artist_names,
-                album_name,
-                album_release_date,
-                album_image_url,
-                track_duration_ms,
-                explicit,
-                popularity
-            FROM tracks
+            {select_distinct_clause}
+                t.track_id,
+                t.track_name,
+                t.artist_names,
+                t.album_name,
+                t.album_release_date,
+                t.album_image_url,
+                t.track_duration_ms,
+                t.explicit,
+                t.popularity
+            {from_clause}
             {where_clause}
             {order_by_clause}
             LIMIT %s OFFSET %s;
         """
-        ).format(where_clause=where_sql, order_by_clause=order_by_sql)
+        ).format(
+            select_distinct_clause=select_distinct_clause,
+            from_clause=from_clause,
+            where_clause=where_sql,
+            order_by_clause=order_by_sql,
+        )
 
         cursor.execute(query, tuple(query_params + [items_per_page, offset]))
         tracks_data = cursor.fetchall()
@@ -190,7 +229,8 @@ def list_tracks_helper(app, items_per_page_default=10):
             total_tracks=total_tracks,
             query=search_query,
             sort_by=sort_by,
-            tags=tags_filter,
+            selected_genres=selected_genres,
+            all_genres=all_genres,
             items_per_page=items_per_page,
         )
 

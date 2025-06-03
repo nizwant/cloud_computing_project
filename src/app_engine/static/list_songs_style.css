@@ -180,6 +180,17 @@ header {
     box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
 }
 
+/* Specific styling for the multi-select dropdown */
+.tags-filter select[multiple] {
+    height: auto;
+    /* Allow height to adjust based on content */
+    min-height: 80px;
+    /* Minimum height to show multiple options */
+    padding: 0.5rem;
+    /* Adjust padding for better look with multiple options */
+    background-image: none;
+    /* Remove the dropdown arrow for multi-select */
+}
 
 .custom-grid {
     display: grid;

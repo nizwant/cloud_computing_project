@@ -41,9 +41,15 @@
                     </div>
 
                     <div class="tags-filter">
-                        <label for="tags">Filter by tags:</label>
-                        <input type="text" name="tags" id="tags" placeholder="e.g., rock, pop"
-                            value="{{ request.args.get('tags', '') }}">
+                        <label for="tags">Filter by genres:</label>
+                        <select name="tags" id="tags" multiple onchange="this.form.submit()">
+                            {% for genre in all_genres %}
+                                <option value="{{ genre.genre_name }}"
+                                    {% if genre.genre_name in selected_genres %}selected{% endif %}>
+                                    {{ genre.genre_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <div class="items-per-page-dropdown">
@@ -90,7 +96,7 @@
             </div>
             <ul class="pagination-links">
                 <li>
-                    <a href="{{ url_for('list_songs', page=current_page - 1, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.get('tags', ''), items_per_page=items_per_page) if current_page > 1 else '#' }}"
+                    <a href="{{ url_for('list_songs', page=current_page - 1, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.getlist('tags'), items_per_page=items_per_page) if current_page > 1 else '#' }}"
                         class="pagination-button prev-button {% if current_page == 1 %}cursor-not-allowed{% endif %}">
                         <span class="sr-only">Previous</span>
                         <svg class="pagination-icon" fill="currentColor" viewBox="0 0 20 20"
@@ -108,7 +114,7 @@
 
                 {% if start_page > 1 %}
                 <li>
-                    <a href="{{ url_for('list_songs', page=1, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.get('tags', ''), items_per_page=items_per_page) }}"
+                    <a href="{{ url_for('list_songs', page=1, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.getlist('tags'), items_per_page=items_per_page) }}"
                         class="pagination-button page-number-button">
                         1
                     </a>
@@ -122,7 +128,7 @@
 
                 {% for p in range(start_page, end_page + 1) %}
                 <li>
-                    <a href="{{ url_for('list_songs', page=p, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.get('tags', ''), items_per_page=items_per_page) }}"
+                    <a href="{{ url_for('list_songs', page=p, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.getlist('tags'), items_per_page=items_per_page) }}"
                         class="pagination-button page-number-button {% if p == current_page %}active{% endif %}">
                         {{ p }}
                     </a>
@@ -136,7 +142,7 @@
                 </li>
                 {% endif %}
                 <li>
-                    <a href="{{ url_for('list_songs', page=total_pages, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.get('tags', ''), items_per_page=items_per_page) }}"
+                    <a href="{{ url_for('list_songs', page=total_pages, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.getlist('tags'), items_per_page=items_per_page) }}"
                         class="pagination-button page-number-button">
                         {{ total_pages }}
                     </a>
@@ -144,7 +150,7 @@
                 {% endif %}
 
                 <li>
-                    <a href="{{ url_for('list_songs', page=current_page + 1, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.get('tags', ''), items_per_page=items_per_page) if current_page < total_pages else '#' }}"
+                    <a href="{{ url_for('list_songs', page=current_page + 1, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.getlist('tags'), items_per_page=items_per_page) if current_page < total_pages else '#' }}"
                         class="pagination-button next-button {% if current_page == total_pages %}cursor-not-allowed{% endif %}">
                         <span class="sr-only">Next</span>
                         <svg class="pagination-icon" fill="currentColor" viewBox="0 0 20 20"
