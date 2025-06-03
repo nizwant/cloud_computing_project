@@ -43,49 +43,61 @@ class GCPFingerprintDB(AbstractFingerprintDB):
         self.conn.autocommit = True
 
     @staticmethod
-    def load_audio(youtube_url: str, download_dir: str = "../../songs", sr: int = 22050):
+    def load_audio(youtube_url: str, song_id: int, download_dir: str = "../../songs", sr: int = 22050):
         print(f"Downloading audio from {youtube_url}...")
 
-        try:
-            with yt_dlp.YoutubeDL({"quiet": True}) as ydl:
-                info = ydl.extract_info(youtube_url, download=False)
-                title = info.get("title", "unknown")
-                safe_title = sanitize_filename(title)
+        output_path = os.path.join(download_dir, f"{song_id}.m4a")
 
-            output_path = os.path.join(download_dir, f"{safe_title}.m4a")
+        ydl_opts = {
+            "format": "m4a/bestaudio/best",
+            "outtmpl": output_path,
+            "quiet": True,
+            "no_warnings": True,
+            "postprocessors": [
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": "m4a",
+                }
+            ],
+            "noplaylist": True,
+        }
 
-            ydl_opts = {
-                "format": "m4a/bestaudio/best",
-                "outtmpl": output_path,
-                "quiet": True,
-                "postprocessors": [
-                    {
-                        "key": "FFmpegExtractAudio",
-                        "preferredcodec": "m4a",
-                    }
-                ],
-                "noplaylist": True,
-            }
+        # Try primary and fallback download formats
+        for attempt, fmt in enumerate(["m4a/bestaudio/best", "bestaudio/best"], start=1):
+            ydl_opts["format"] = fmt
+            try:
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    ydl.download([youtube_url])
+                break  # Success, exit loop
+            except yt_dlp.utils.DownloadError as e:
+                print(f"[Attempt {attempt}] Download error: {e}")
+                if attempt == 2:
+                    return None
 
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([youtube_url])
-        except Exception as e:
-            print(f"Error loading audio from {youtube_url}: {e}")
-            print("STDOUT:", e.stdout.decode(errors="ignore"))
-            print("STDERR:", e.stderr.decode(errors="ignore"))
+        # Check if file exists and is not empty
+        if not os.path.exists(output_path) or os.path.getsize(output_path) == 0:
+            print(f"Error: The downloaded file for track {song_id} is missing or empty.")
             return None
+
+        # Decode audio
         try:
             audio = AudioSegment.from_file(output_path)
             audio = audio.set_channels(1).set_frame_rate(sr)
             samples = np.array(audio.get_array_of_samples()).astype(np.float32) / 32768.0
             return samples, sr
+        except Exception as e:
+            print(f"Error decoding audio for track {song_id}: {e}")
+            return None
         finally:
             if os.path.exists(output_path):
                 os.remove(output_path)
 
-    def load_tracks_from_db(self):
+    def load_tracks_from_db(self, min_id: int = None):
+        id_condition = ""
+        if min_id is not None:
+            id_condition = f" AND track_id > {min_id}"
         with self.conn.cursor() as cur:
-            cur.execute("SELECT track_id, track_name, youtube_url FROM tracks where track_id > 44;")
+            cur.execute(f"SELECT track_id, track_name, youtube_url FROM tracks WHERE youtube_url != ''{id_condition};")
             rows = cur.fetchall()
             return rows
     def add_song(self, song_id: int, title: str, fingerprints: List[Dict[str, any]]) -> None:
@@ -157,6 +169,11 @@ class GCPFingerprintDB(AbstractFingerprintDB):
                 return row[0], row[1], row[2], row[3]
             else:
                 return None, None, None, None
+
+    def get_indexed_song_ids(self) -> List[int]:
+        with self.conn.cursor() as cur:
+            cur.execute("SELECT DISTINCT song_id FROM fingerprints;")
+            return [row[0] for row in cur.fetchall()]
 
     def close(self):
         self.conn.close()

@@ -8,29 +8,81 @@ from src.abracadabra.AbstractFingerprintDB import AbstractFingerprintDB
 from pydub import AudioSegment
 import numpy as np
 
-def index_song_file(db: AbstractFingerprintDB, song_id: int, path: str, title: str) -> None:
-    audio, sr = db.load_audio(path)
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm
+
+
+def process_single_song(db: AbstractFingerprintDB, song_id: int, path: str, title: str) -> None:
+    audio, sr = db.load_audio(path, song_id)
     peaks = get_peaks(audio)
     fingerprints = generate_fingerprints(peaks)
     db.add_song(song_id, title, fingerprints)
 
-def index_all_songs(db_type: str = "memory", song_dir: str = None) -> AbstractFingerprintDB:
+
+def index_single_song_memory(song_id, filename, db):
+    if filename.lower().endswith(".m4a"):
+        try:
+            path = os.path.join(song_dir, filename)
+            process_single_song(db, song_id, path, filename)
+        except Exception as e:
+            print(f"Error indexing {filename}: {e}")
+
+
+def index_single_song_gcp(song_id, song_name, youtube_url, db, existing_ids, skip_duplicates: bool = False):
+    if skip_duplicates and song_id in existing_ids:
+        print(f"Skipping {song_name} (ID {song_id}) — already indexed.")
+        return
+    try:
+        process_single_song(db, song_id, youtube_url, song_name)
+    except Exception as e:
+        print(f"Error indexing {song_name} (ID {song_id}): {e}")
+
+
+# def index_all_songs(db_type: str = "memory", song_dir: str = None) -> AbstractFingerprintDB:
+#     db = create_fingerprint_db(db_type)
+#     if db_type == "memory":
+#         for idx, filename in enumerate(os.listdir(song_dir)):
+#             if filename.lower().endswith(".m4a"):
+#                 path = os.path.join(song_dir, filename)
+#                 process_single_song(db, idx, path, filename)
+#     else:
+#         tracks = db.load_tracks_from_db()
+#         n_tracks = len(tracks)
+#         for song_id, song_name, youtube_url in tracks:
+#             process_single_song(db, song_id, youtube_url, song_name)
+#             print(f"Indexed {song_name} ({song_id}/{n_tracks})")
+#     return db
+
+def index_all_songs(db_type: str = "memory", song_dir: str = None,
+                    skip_duplicates: bool = False) -> AbstractFingerprintDB:
     db = create_fingerprint_db(db_type)
+    existing_ids = set()
+
+    if skip_duplicates and db_type != "memory":
+        existing_ids = set(db.get_indexed_song_ids())
+
     if db_type == "memory":
-        for idx, filename in enumerate(os.listdir(song_dir)):
-            if filename.lower().endswith(".m4a"):
-                path = os.path.join(song_dir, filename)
-                index_song_file(db, idx, path, filename)
+        files = [(idx, f, db) for idx, f in enumerate(os.listdir(song_dir)) if f.lower().endswith(".m4a")]
+        with ThreadPoolExecutor() as executor:
+            list(tqdm(executor.map(lambda args: index_single_song_memory(*args), files), total=len(files)))
     else:
         tracks = db.load_tracks_from_db()
         n_tracks = len(tracks)
-        for song_id, song_name, youtube_url in tracks:
-            index_song_file(db, song_id, youtube_url, song_name)
-            print(f"Indexed {song_name} ({song_id}/{n_tracks})")
+
+        with ThreadPoolExecutor() as executor:
+            futures = {
+                executor.submit(index_single_song_gcp, song_id, song_name, youtube_url, db, existing_ids,
+                                skip_duplicates): (song_id, song_name)
+                for song_id, song_name, youtube_url in tracks
+            }
+            for future in tqdm(as_completed(futures), total=n_tracks):
+                pass  # Progress shown by tqdm; errors are printed inside `index_single_song_gcp`
+
     return db
 
+
 def recognize_song(
-    query_path: str, db: AbstractFingerprintDB, sr: int = 22050
+        query_path: str, db: AbstractFingerprintDB, sr: int = 22050
 ) -> tuple[int, int] | None:
     audio = AudioSegment.from_file(query_path)
     audio = audio.set_channels(1).set_frame_rate(sr)
