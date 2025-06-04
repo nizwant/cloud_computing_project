@@ -5,23 +5,21 @@ from typing import List, Tuple, Dict, Any
 from src.abracadabra.AbstractFingerprintDB import AbstractFingerprintDB
 from google.cloud import secretmanager
 import yt_dlp
-import tempfile
-import ffmpeg
-import soundfile as sf
-import io
 from pydub import AudioSegment
 import numpy as np
 import re
 
-def get_secret(secret_id, project_id):
+
+def get_secret(secret_id: str, project_id: str):
     client = secretmanager.SecretManagerServiceClient()
     name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
     response = client.access_secret_version(request={"name": name})
     return response.payload.data.decode("utf-8").replace("\n", "")
 
+
 def sanitize_filename(name: str) -> str:
     # Replace invalid filename characters with underscore
-    return re.sub(r'[<>:"/\\|?*\n\r\t]', '_', name)
+    return re.sub(r'[<>:"/\\|?*\n\r\t]', "_", name)
 
 
 class GCPFingerprintDB(AbstractFingerprintDB):
@@ -43,7 +41,12 @@ class GCPFingerprintDB(AbstractFingerprintDB):
         self.conn.autocommit = True
 
     @staticmethod
-    def load_audio(youtube_url: str, song_id: int, download_dir: str = "../songs/temp", sr: int = 22050):
+    def load_audio(
+        youtube_url: str,
+        song_id: int,
+        download_dir: str = "../songs/temp",
+        sr: int = 22050,
+    ):
         print(f"Downloading audio from {youtube_url}...")
 
         output_path = os.path.join(download_dir, f"{song_id}")
@@ -65,7 +68,9 @@ class GCPFingerprintDB(AbstractFingerprintDB):
         }
 
         # Try primary and fallback download formats
-        for attempt, fmt in enumerate(["m4a/bestaudio/best", "bestaudio/best"], start=1):
+        for attempt, fmt in enumerate(
+            ["m4a/bestaudio/best", "bestaudio/best"], start=1
+        ):
             ydl_opts["format"] = fmt
             try:
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -78,14 +83,18 @@ class GCPFingerprintDB(AbstractFingerprintDB):
 
         # Check if file exists and is not empty
         if not os.path.exists(output_path_m4a) or os.path.getsize(output_path_m4a) == 0:
-            print(f"Error: The downloaded file for track {song_id} is missing or empty.")
+            print(
+                f"Error: The downloaded file for track {song_id} is missing or empty."
+            )
             return None
 
         # Decode audio
         try:
             audio = AudioSegment.from_file(output_path_m4a)
             audio = audio.set_channels(1).set_frame_rate(sr)
-            samples = np.array(audio.get_array_of_samples()).astype(np.float32) / 32768.0
+            samples = (
+                np.array(audio.get_array_of_samples()).astype(np.float32) / 32768.0
+            )
             return samples, sr
         except Exception as e:
             print(f"Error decoding audio for track {song_id}: {e}")
@@ -99,10 +108,16 @@ class GCPFingerprintDB(AbstractFingerprintDB):
         if min_id is not None:
             id_condition = f" AND track_id > {min_id}"
         with self.conn.cursor() as cur:
-            cur.execute(f"SELECT track_id, track_name, youtube_url FROM tracks WHERE youtube_url != ''{id_condition};")
+            cur.execute(
+                "SELECT track_id, track_name, youtube_url FROM tracks "
+                f"WHERE youtube_url != ''{id_condition};"
+            )
             rows = cur.fetchall()
             return rows
-    def add_song(self, song_id: int, title: str, fingerprints: List[Dict[str, any]]) -> None:
+
+    def add_song(
+        self, song_id: int, title: str, fingerprints: List[Dict[str, any]]
+    ) -> None:
 
         # Insert fingerprints in bulk
         records = []
@@ -122,7 +137,9 @@ class GCPFingerprintDB(AbstractFingerprintDB):
             """
             execute_values(cur, insert_query, records)
 
-    def get_matches(self, fingerprints: List[Dict[str, any]]) -> List[Tuple[int, float]]:
+    def get_matches(
+        self, fingerprints: List[Dict[str, any]]
+    ) -> List[Tuple[int, float]]:
         matches = []
         if not fingerprints:
             return matches
@@ -149,7 +166,9 @@ class GCPFingerprintDB(AbstractFingerprintDB):
         for song_id, db_timestamp in results:
             # Calculate offsets for all query timestamps with the same hash
             # Append all matches
-            for query_timestamp in hash_to_query_timestamps.get(str(tuple(fp["hash"].values())), []):
+            for query_timestamp in hash_to_query_timestamps.get(
+                str(tuple(fp["hash"].values())), []
+            ):
                 offset = db_timestamp - query_timestamp
                 matches.append((song_id, offset))
 
@@ -157,15 +176,24 @@ class GCPFingerprintDB(AbstractFingerprintDB):
 
     def show_table(self):
         with self.conn.cursor() as cur:
-            cur.execute("SELECT distinct fingerprints.song_id, tracks.track_name FROM fingerprints "
-                        "JOIN tracks ON fingerprints.song_id = tracks.track_id order by fingerprints.song_id;")
+            cur.execute(
+                "SELECT DISTINCT fingerprints.song_id, tracks.track_name FROM fingerprints "
+                "JOIN tracks ON fingerprints.song_id = tracks.track_id "
+                "ORDER BY fingerprints.song_id;"
+            )
             rows = cur.fetchall()
             for row in rows:
                 print(row)
 
-    def check_song_info(self, song_id: int) -> tuple[Any, Any, Any, Any] | tuple[None, None, None, None]:
+    def check_song_info(
+        self, song_id: int
+    ) -> tuple[Any, Any, Any, Any] | tuple[None, None, None, None]:
         with self.conn.cursor() as cur:
-            cur.execute("SELECT track_name, artist_names, album_name, youtube_url FROM tracks WHERE track_id = %s;", (song_id,))
+            cur.execute(
+                "SELECT track_name, artist_names, album_name, youtube_url FROM tracks "
+                "WHERE track_id = %s;",
+                (song_id,),
+            )
             row = cur.fetchone()
             if row:
                 return row[0], row[1], row[2], row[3]
