@@ -1,27 +1,32 @@
 import numpy as np
 import librosa
 import scipy.ndimage
-from typing import List, Tuple, Dict
+from typing import TypedDict, List, Tuple
+
+
+class Fingerprint(TypedDict):
+    hash: dict
+    timestamp: float
+
+
+Peak = Tuple[int, int]  # (time_index, freq_index)
 
 
 def get_peaks(
-    audio, n_fft: int = 2048, hop_length: int = 512, threshold: int = -40
-) -> list:
+    audio: np.ndarray, n_fft: int = 2048, hop_length: int = 512, threshold: int = -40
+) -> List[Peak]:
     S = np.abs(librosa.stft(audio, n_fft=n_fft, hop_length=hop_length))
     S_db = librosa.amplitude_to_db(S, ref=np.max)
     local_max = scipy.ndimage.maximum_filter(S_db, size=(20, 10)) == S_db
     detected_peaks = (S_db > threshold) & local_max
-    peak_freqs, peak_times = np.where(detected_peaks)
-    return list(zip(peak_times, peak_freqs))
+    freqs, times = np.where(detected_peaks)
+    return list(zip(times, freqs))
 
 
 def generate_fingerprints(
-    peaks: List[Tuple[float, float]],
-    fan_value: int = 5,
-    min_delta: float = 0,
-    max_delta: float = 200,
-) -> List[Dict[str, any]]:
-    fingerprints: List[Dict[str, any]] = []
+    peaks: List[Peak], fan_value: int = 5, min_delta: float = 0, max_delta: float = 200
+) -> List[Fingerprint]:
+    fingerprints: List[Fingerprint] = []
     for i in range(len(peaks)):
         t1, f1 = peaks[i]
         for j in range(1, fan_value + 1):
