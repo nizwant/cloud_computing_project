@@ -5,7 +5,9 @@ from src.abracadabra.fingerprint import Fingerprint
 
 class AbstractFingerprintDB(ABC):
     @abstractmethod
-    def add_song(self, song_id: int, title: str, fingerprints: List[Fingerprint]) -> None:
+    def add_song(
+        self, song_id: int, title: str, fingerprints: List[Fingerprint]
+    ) -> None:
         pass
 
     @abstractmethod
