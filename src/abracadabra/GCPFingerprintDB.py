@@ -43,10 +43,12 @@ class GCPFingerprintDB(AbstractFingerprintDB):
         self.conn.autocommit = True
 
     @staticmethod
-    def load_audio(youtube_url: str, song_id: int, download_dir: str = "../../songs", sr: int = 22050):
+    def load_audio(youtube_url: str, song_id: int, download_dir: str = "../songs/temp", sr: int = 22050):
         print(f"Downloading audio from {youtube_url}...")
 
-        output_path = os.path.join(download_dir, f"{song_id}.m4a")
+        output_path = os.path.join(download_dir, f"{song_id}")
+
+        output_path_m4a = f"{output_path}.m4a"
 
         ydl_opts = {
             "format": "m4a/bestaudio/best",
@@ -75,13 +77,13 @@ class GCPFingerprintDB(AbstractFingerprintDB):
                     return None
 
         # Check if file exists and is not empty
-        if not os.path.exists(output_path) or os.path.getsize(output_path) == 0:
+        if not os.path.exists(output_path_m4a) or os.path.getsize(output_path_m4a) == 0:
             print(f"Error: The downloaded file for track {song_id} is missing or empty.")
             return None
 
         # Decode audio
         try:
-            audio = AudioSegment.from_file(output_path)
+            audio = AudioSegment.from_file(output_path_m4a)
             audio = audio.set_channels(1).set_frame_rate(sr)
             samples = np.array(audio.get_array_of_samples()).astype(np.float32) / 32768.0
             return samples, sr
@@ -89,8 +91,8 @@ class GCPFingerprintDB(AbstractFingerprintDB):
             print(f"Error decoding audio for track {song_id}: {e}")
             return None
         finally:
-            if os.path.exists(output_path):
-                os.remove(output_path)
+            if os.path.exists(output_path_m4a):
+                os.remove(output_path_m4a)
 
     def load_tracks_from_db(self, min_id: int = None):
         id_condition = ""
