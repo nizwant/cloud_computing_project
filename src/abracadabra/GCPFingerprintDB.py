@@ -2,7 +2,7 @@ import os
 import psycopg2
 from psycopg2.extras import execute_values
 from typing import List, Tuple, Dict
-from src.abracadabra.AbstractFingerprintDB import AbstractFingerprintDB
+from abracadabra.AbstractFingerprintDB import AbstractFingerprintDB
 from google.cloud import secretmanager
 import yt_dlp
 from pydub import AudioSegment
