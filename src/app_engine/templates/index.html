@@ -11,7 +11,7 @@
 
         <div class="microphone-container">
             <div class="microphone-pulse"></div>
-            <div class="microphone-icon" aria-label="Tap to identify music">
+            <div class="microphone-icon" aria-label="Tap to identify music" onclick="startRecording()">
                 <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
                   <g>
                     <g>
@@ -32,9 +32,13 @@
                   </g>
                 </svg>
             </div>
+            <p id="recording-status" style="display:none; font-weight: bold; color: red;">Recording...</p>
             <p class="hero-subtitle">Tap the microphone to identify any song playing around you.</p>
             <p class="or-subtitle">or</p>
-            <button class="shazam-button" aria-label="Identify Song">Upload a file...</button>
+            <input type="file" id="file-input" accept="audio/*" style="display: none;" />
+            <button class="shazam-button" aria-label="Identify Song" onclick="document.getElementById('file-input').click();">
+              Upload a file...
+            </button>
         </div>
     </section>
 
@@ -49,4 +53,5 @@
         </div>
     </section>
 </div>
+
 {% endblock %}
