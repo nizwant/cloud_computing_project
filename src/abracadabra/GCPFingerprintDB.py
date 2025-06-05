@@ -187,18 +187,29 @@ class GCPFingerprintDB(AbstractFingerprintDB):
 
     def check_song_info(
         self, song_id: int
-    ) -> tuple[Any, Any, Any, Any] | tuple[None, None, None, None]:
+    ) -> dict:
         with self.conn.cursor() as cur:
             cur.execute(
-                "SELECT track_name, artist_names, album_name, youtube_url FROM tracks "
+                "SELECT "
+                "track_name, artist_names, album_name, album_release_date, "
+                "album_image_url, track_duration_ms, explicit, youtube_url FROM tracks "
                 "WHERE track_id = %s;",
                 (song_id,),
             )
             row = cur.fetchone()
             if row:
-                return row[0], row[1], row[2], row[3]
+                return {
+                    "track_name": row[0],
+                    "artist_names": row[1],
+                    "album_name": row[2],
+                    "album_release_date": row[3],
+                    "album_image_url": row[4],
+                    "track_duration_ms": row[5],
+                    "explicit": row[6],
+                    "youtube_url": row[7],
+                }
             else:
-                return None, None, None, None
+                return {}
 
     def get_indexed_song_ids(self) -> List[int]:
         with self.conn.cursor() as cur:
