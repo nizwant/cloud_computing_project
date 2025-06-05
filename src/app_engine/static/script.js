@@ -87,4 +87,3 @@ document.getElementById('file-input').addEventListener('change', function() {
     document.getElementById('upload-form').submit();
   }
 });
-

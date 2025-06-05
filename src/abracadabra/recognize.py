@@ -94,7 +94,10 @@ def index_all_songs(
 
 
 def recognize_song(
-    query_path: str, db: AbstractFingerprintDB = None, sr: int = 22050, db_type: str = "gcp"
+    query_path: str,
+    db: AbstractFingerprintDB = None,
+    sr: int = 22050,
+    db_type: str = "gcp",
 ) -> tuple[int, int] | dict | None:
     if db is None:
         db = create_fingerprint_db(db_type)

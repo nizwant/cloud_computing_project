@@ -9,7 +9,8 @@ from utils_db import list_tracks_helper, check_if_song_exists
 import sys
 import os
 import tempfile
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 from src.abracadabra.recognize import recognize_song
 
 app = Flask(__name__)
@@ -55,11 +56,12 @@ def push_to_pub_sub():
         publisher.publish(topic_path, message_json.encode("utf-8"))
     return jsonify(check), 200
 
-@app.route('/identify', methods=['POST'])
+
+@app.route("/identify", methods=["POST"])
 def identify():
-    audio_file = request.files.get('audio_file')
+    audio_file = request.files.get("audio_file")
     if not audio_file:
-        return jsonify({'error': 'No file uploaded'}), 400
+        return jsonify({"error": "No file uploaded"}), 400
 
     # Extract original file extension for pydub
     filename = audio_file.filename
@@ -73,21 +75,19 @@ def identify():
         result = recognize_song(temp_file.name)
 
     if result is None:
-        return redirect(url_for('result', match='No match found'))
+        return redirect(url_for("result", match="No match found"))
 
     # If result is a dict, convert to string or jsonify
     match_str = str(result)  # or json.dumps(result) if needed
 
-    return redirect(url_for('result', match=match_str))
+    return redirect(url_for("result", match=match_str))
 
-from flask import render_template, request
 
-@app.route('/result')
+@app.route("/result")
 def result():
     # Expecting match info passed as query parameters or via session/POST
-    match = request.args.get('match')  # e.g. JSON string or simple text
-    return render_template('result.html', match=match)
-
+    match = request.args.get("match")  # e.g. JSON string or simple text
+    return render_template("result.html", match=match)
 
 
 # --- Helper for Jinja2 template to access utility functions ---

@@ -1,7 +1,7 @@
 import os
 import psycopg2
 from psycopg2.extras import execute_values
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple, Dict
 from src.abracadabra.AbstractFingerprintDB import AbstractFingerprintDB
 from google.cloud import secretmanager
 import yt_dlp
@@ -185,9 +185,7 @@ class GCPFingerprintDB(AbstractFingerprintDB):
             for row in rows:
                 print(row)
 
-    def check_song_info(
-        self, song_id: int
-    ) -> dict:
+    def check_song_info(self, song_id: int) -> dict:
         with self.conn.cursor() as cur:
             cur.execute(
                 "SELECT "
