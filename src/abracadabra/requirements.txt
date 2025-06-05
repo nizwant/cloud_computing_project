@@ -1,0 +1,9 @@
+auto_mix_prep
+librosa
+numpy
+protobuf
+psycopg2
+pydub
+scipy
+tqdm
+yt_dlp
