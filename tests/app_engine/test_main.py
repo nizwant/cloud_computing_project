@@ -3,10 +3,10 @@ import os
 
 
 sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src/app_engine"))
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
 )
 
-from main import app
+from app_engine.main import app
 import pytest
 
 

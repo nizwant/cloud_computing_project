@@ -3,15 +3,18 @@ import logging
 import json
 from google.cloud import pubsub_v1
 
-from utils_misc import format_duration_ms, get_release_year
-from utils_db import list_tracks_helper, check_if_song_exists
-
 import sys
 import os
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
+)
+
+from app_engine.utils_misc import format_duration_ms, get_release_year
+from app_engine.utils_db import list_tracks_helper, check_if_song_exists
+
 import tempfile
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-from src.abracadabra.recognize import recognize_song
+from abracadabra.recognize import recognize_song
 
 app = Flask(__name__)
 
