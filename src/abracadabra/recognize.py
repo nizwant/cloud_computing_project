@@ -12,21 +12,21 @@ from tqdm import tqdm
 
 
 def process_single_song(
-    db: AbstractFingerprintDB, song_id: int, path: str, title: str
+    db: AbstractFingerprintDB, song_id: int, path: str, title: str, cookies: bool
 ) -> None:
-    audio, sr = db.load_audio(path, song_id)
+    audio, sr = db.load_audio(path, song_id, cookies=cookies)
     peaks = get_peaks(audio)
     fingerprints = generate_fingerprints(peaks)
     db.add_song(song_id, title, fingerprints)
 
 
 def index_single_song_memory(
-    song_id: int, filename: str, db: AbstractFingerprintDB, song_dir: str = "../songs"
+    song_id: int, filename: str, db: AbstractFingerprintDB, cookies: bool, song_dir: str = "../songs"
 ):
     if filename.lower().endswith(".m4a"):
         try:
             path = os.path.join(song_dir, filename)
-            process_single_song(db, song_id, path, filename)
+            process_single_song(db, song_id, path, filename, cookies)
         except Exception as e:
             print(f"Error indexing {filename}: {e}")
 
@@ -38,18 +38,19 @@ def index_single_song_gcp(
     db: AbstractFingerprintDB,
     existing_ids: set,
     skip_duplicates: bool = False,
+    cookies: bool = False,
 ):
     if skip_duplicates and song_id in existing_ids:
         print(f"Skipping {song_name} (ID {song_id}) — already indexed.")
         return
     try:
-        process_single_song(db, song_id, youtube_url, song_name)
+        process_single_song(db, song_id, youtube_url, song_name, cookies=cookies)
     except Exception as e:
         print(f"Error indexing {song_name} (ID {song_id}): {e}")
 
 
 def index_all_songs(
-    db_type: str = "memory", song_dir: str = None, skip_duplicates: bool = False
+    db_type: str = "memory", song_dir: str = None, skip_duplicates: bool = False, cookies: bool = False
 ) -> AbstractFingerprintDB:
     db = create_fingerprint_db(db_type)
     existing_ids = set()
@@ -59,7 +60,7 @@ def index_all_songs(
 
     if db_type == "memory":
         files = [
-            (idx, f, db)
+            (idx, f, db, cookies)
             for idx, f in enumerate(os.listdir(song_dir))
             if f.lower().endswith(".m4a")
         ]
@@ -84,6 +85,7 @@ def index_all_songs(
                     db,
                     existing_ids,
                     skip_duplicates,
+                    cookies
                 ): (song_id, song_name)
                 for song_id, song_name, youtube_url in tracks
             }

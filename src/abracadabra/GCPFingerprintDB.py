@@ -46,6 +46,7 @@ class GCPFingerprintDB(AbstractFingerprintDB):
         song_id: int,
         download_dir: str = "../songs/temp",
         sr: int = 22050,
+        cookies: bool = False
     ):
         print(f"Downloading audio from {youtube_url}...")
 
@@ -53,19 +54,36 @@ class GCPFingerprintDB(AbstractFingerprintDB):
 
         output_path_m4a = f"{output_path}.m4a"
 
-        ydl_opts = {
-            "format": "m4a/bestaudio/best",
-            "outtmpl": output_path,
-            "quiet": True,
-            "no_warnings": True,
-            "postprocessors": [
-                {
-                    "key": "FFmpegExtractAudio",
-                    "preferredcodec": "m4a",
-                }
-            ],
-            "noplaylist": True,
-        }
+        if cookies:
+            ydl_opts = {
+                "format": "m4a/bestaudio/best",
+                "outtmpl": output_path,
+                "quiet": True,
+                "no_warnings": True,
+                "cookiefile": "../src/abracadabra/www.youtube.com_cookies.txt",  # Path to your cookies file
+                "postprocessors": [
+                    {
+                        "key": "FFmpegExtractAudio",
+                        "preferredcodec": "m4a",
+                    }
+                ],
+                "noplaylist": True,
+            }
+
+        else:
+            ydl_opts = {
+                "format": "m4a/bestaudio/best",
+                "outtmpl": output_path,
+                "quiet": True,
+                "no_warnings": True,
+                "postprocessors": [
+                    {
+                        "key": "FFmpegExtractAudio",
+                        "preferredcodec": "m4a",
+                    }
+                ],
+                "noplaylist": True,
+            }
 
         # Try primary and fallback download formats
         for attempt, fmt in enumerate(
