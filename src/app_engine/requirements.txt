@@ -3,3 +3,4 @@ gunicorn
 psycopg2-binary
 google-cloud-secret-manager
 google-cloud-pubsub
+numpy
