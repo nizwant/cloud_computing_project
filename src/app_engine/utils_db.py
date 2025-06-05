@@ -7,7 +7,7 @@ import math
 from google.cloud import secretmanager
 
 
-from utils_misc import format_duration_ms, get_release_year, get_secret
+from app_engine.utils_misc import format_duration_ms, get_release_year, get_secret
 
 
 # --- Database Connection Parameters ---
