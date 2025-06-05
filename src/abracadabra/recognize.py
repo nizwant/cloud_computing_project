@@ -1,9 +1,13 @@
 import os
 from collections import Counter
 
-from src.abracadabra.fingerprint import get_peaks, generate_fingerprints
-from src.abracadabra.database import create_fingerprint_db
-from src.abracadabra.AbstractFingerprintDB import AbstractFingerprintDB
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
+)
+
+from abracadabra.fingerprint import get_peaks, generate_fingerprints
+from abracadabra.database import create_fingerprint_db
+from abracadabra.AbstractFingerprintDB import AbstractFingerprintDB
 from pydub import AudioSegment
 import numpy as np
 
