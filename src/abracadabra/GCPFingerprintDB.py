@@ -46,7 +46,7 @@ class GCPFingerprintDB(AbstractFingerprintDB):
         song_id: int,
         download_dir: str = "../songs/temp",
         sr: int = 22050,
-        cookies: bool = False
+        cookies: bool = False,
     ):
         print(f"Downloading audio from {youtube_url}...")
 
