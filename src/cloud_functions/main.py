@@ -4,13 +4,15 @@ from flask import jsonify
 
 from abracadabra.recognize import recognize_song
 
+
 # The most important function in this project!!!
 def add(a, b):
     return a + b
 
+
 def recognize_http(request):
-    if request.method != 'POST':
-        return jsonify({'error': 'Method not allowed. Use POST.'}), 405
+    if request.method != "POST":
+        return jsonify({"error": "Method not allowed. Use POST."}), 405
 
     audio_file = request.files.get("audio_file")
     if not audio_file:
@@ -27,4 +29,3 @@ def recognize_http(request):
         return jsonify({"match": None})
 
     return jsonify({"match": result})
-

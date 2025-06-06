@@ -26,7 +26,11 @@ def process_single_song(
 
 
 def index_single_song_memory(
-    song_id: int, filename: str, db: AbstractFingerprintDB, cookies: bool, song_dir: str = "../songs"
+    song_id: int,
+    filename: str,
+    db: AbstractFingerprintDB,
+    cookies: bool,
+    song_dir: str = "../songs",
 ):
     if filename.lower().endswith(".m4a"):
         try:
@@ -55,7 +59,10 @@ def index_single_song_gcp(
 
 
 def index_all_songs(
-    db_type: str = "memory", song_dir: str = None, skip_duplicates: bool = False, cookies: bool = False
+    db_type: str = "memory",
+    song_dir: str = None,
+    skip_duplicates: bool = False,
+    cookies: bool = False,
 ) -> AbstractFingerprintDB:
     db = create_fingerprint_db(db_type)
     existing_ids = set()
@@ -90,7 +97,7 @@ def index_all_songs(
                     db,
                     existing_ids,
                     skip_duplicates,
-                    cookies
+                    cookies,
                 ): (song_id, song_name)
                 for song_id, song_name, youtube_url in tracks
             }
