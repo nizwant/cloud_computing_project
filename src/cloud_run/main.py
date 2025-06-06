@@ -6,7 +6,7 @@ import os
 import time
 from google.cloud import pubsub_v1
 from video_handler import handle_youtube_url
-
+ 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -100,26 +100,7 @@ def process_batch():
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint."""
-    return 'Healthy. GG', 200
-
-@app.route("/debug", methods=["GET"])
-def debug_info():
-    """Return debug information about the service."""
-    routes = [str(rule) for rule in app.url_map.iter_rules()]
-    return jsonify({
-        "routes": routes,
-        "version": "1.0.0",
-        "timestamp": time.time()
-    })
-
-@app.route("/debug2", methods=["GET"])
-def debug_info():
-    return "Debug endpoint is working!", 200
-
-@app.route("/", methods=["GET"])
-def root():
-    """Root endpoint."""
-    return "Root endpoint. Service is running.", 200
+    return 'Healthy', 200
 
 if __name__ == '__main__':
     PORT = int(os.getenv('PORT', 8080))
