@@ -1,100 +1,61 @@
-from flask import Flask, jsonify
+from flask import Flask, request
 import base64
 import json
 import logging
 import os
-import time
-from google.cloud import pubsub_v1
 from video_handler import handle_youtube_url
- 
+
 app = Flask(__name__)
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Configure the subscriber client
-subscriber = pubsub_v1.SubscriberClient()
-subscription_path = subscriber.subscription_path("cloud-computing-project-458205", "sub-songs-to-process")
-BATCH_SIZE = 100  # Process 100 songs at a time
+@app.route("/", methods=["POST"])
+def process_pubsub_message():
+    envelope = request.get_json()
 
-@app.route("/process_batch", methods=["GET"])
-def process_batch():
-    """Process a batch of songs from Pub/Sub queue."""
-    messages = []
-    songs_processed = 0
+    if not envelope or "message" not in envelope:
+        logger.error("No Pub/Sub message received")
+        return "Bad Request: no Pub/Sub message received", 400
+    
+    if not isinstance(envelope, dict) or 'message' not in envelope:
+        logger.error("Invalid Pub/Sub message format")
+        return 'Bad Request: Invalid Pub/Sub message format', 400
+    
+    # Extract message data from Pub/Sub message
+    pubsub_message = envelope['message']
+    
+    if 'data' not in pubsub_message:
+        logger.warning("Empty Pub/Sub message received")
+        return 'Success: No message data', 200
     
     try:
-        # Pull a batch of messages
-        response = subscriber.pull(
-            request={"subscription": subscription_path, "max_messages": BATCH_SIZE}
-        )
+        # Decode message payload from base64
+        message_data = base64.b64decode(pubsub_message['data']).decode('utf-8') 
+        logger.info(f"Received message data: {message_data}")
         
-        if not response.received_messages:
-            return jsonify({"status": "success", "messages": "No messages to process"})
-            
-        logger.info(f"Received {len(response.received_messages)} messages")
-        
-        # Process all messages in the batch
-        for received_message in response.received_messages:
-            try:
-                # Extract message data
-                message = received_message.message
-                message_data = base64.b64decode(message.data).decode('utf-8')
-                
-                try:
-                    song_info = json.loads(message_data)
-                    messages.append({
-                        "ack_id": received_message.ack_id,
-                        "song_info": song_info,
-                        "status": "pending"
-                    })
-                except json.JSONDecodeError as e:
-                    logger.error(f"Invalid JSON: {message_data} - Error: {str(e)}")
-                    # Mark invalid messages for acknowledgment
-                    messages.append({
-                        "ack_id": received_message.ack_id,
-                        "error": f"Invalid JSON: {str(e)}",
-                        "status": "invalid"
-                    })
-            except Exception as e:
-                logger.error(f"Error processing message: {str(e)}")
-                messages.append({
-                    "ack_id": received_message.ack_id,
-                    "error": str(e),
-                    "status": "error"
-                })
-        
-        # Batch process the valid songs
-        valid_songs = [m for m in messages if m.get("status") == "pending"]
-        if valid_songs:
-            logger.info(f"Processing batch of {len(valid_songs)} valid songs")
+        try:
+            song_info = json.loads(message_data)
+            logger.info(f"Processing song: {song_info.get('title')} by {song_info.get('artist')}")
             
             # TODO: Add logic to:
             # 1. Search for song metadata via Spotify APIs
             # 2. Search for YouTube url via YouTube APIs
             # 3. Download m4a file from YouTube
             # 4. Create fingerprint of the audio file
-            # 5. Upload song data and fingerprint to the database
+            # 5. Upload song data and fingerprint to the database 
             
-            songs_processed = len(valid_songs)
-        
-        # Acknowledge all messages
-        ack_ids = [msg["ack_id"] for msg in messages]
-        if ack_ids:
-            subscriber.acknowledge(
-                request={"subscription": subscription_path, "ack_ids": ack_ids}
-            )
-        
-        return jsonify({
-            "status": "success", 
-            "total_messages": len(messages),
-            "processed": songs_processed,
-            "invalid": len([m for m in messages if m.get("status") == "invalid"]),
-            "errors": len([m for m in messages if m.get("status") == "error"])
-        })
-        
+            return "OK", 200
+            
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON: {message_data} - Error: {str(e)}")
+            # Return 200 to acknowledge invalid messages
+            return "Success: Invalid JSON acknowledged", 200
+
     except Exception as e:
-        logger.error(f"Batch processing error: {str(e)}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+        logger.error(f"Error: {str(e)}")
+        # Return 200 to stop the retry cycle
+        return "Success: Error logged", 200
         
     
 @app.route('/health', methods=['GET'])
