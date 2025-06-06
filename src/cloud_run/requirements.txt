@@ -3,3 +3,5 @@ gunicorn
 yt-dlp
 google-cloud-pubsub
 requests
+spotipy
+google-cloud-secret-manager
