@@ -15,7 +15,8 @@ function uploadAudioFile(audioBlob) {
 
   document.getElementById('loading-message').style.display = 'block';
 
-  fetch('/identify', {
+  // fetch('/identify', {
+fetch('https://REGION-PROJECT.cloudfunctions.net/recognize_http', {
     method: 'POST',
     body: formData
   })

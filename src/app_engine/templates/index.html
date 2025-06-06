@@ -37,10 +37,6 @@
             </div>
             <p class="hero-subtitle">Tap the microphone to identify any song playing around you.</p>
             <p class="or-subtitle">or</p>
-<!--            <input type="file" id="file-input" accept="audio/*" style="display: none;" />-->
-<!--            <button class="shazam-button" aria-label="Identify Song" onclick="document.getElementById('file-input').click();">-->
-<!--              Upload a file...-->
-<!--            </button>-->
             <form id="upload-form" method="POST" enctype="multipart/form-data" action="/identify">
               <input type="file" id="file-input" name="audio_file" accept="audio/*" style="display:none;" />
               <button type="button" class="shazam-button" aria-label="Identify Song" onclick="document.getElementById('file-input').click();">
