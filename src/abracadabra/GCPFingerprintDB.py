@@ -1,8 +1,8 @@
 import os
 import psycopg2
 from psycopg2.extras import execute_values
-from typing import List, Tuple, Dict, Any
-from src.abracadabra.AbstractFingerprintDB import AbstractFingerprintDB
+from typing import List, Tuple, Dict
+from abracadabra.AbstractFingerprintDB import AbstractFingerprintDB
 from google.cloud import secretmanager
 import yt_dlp
 from pydub import AudioSegment
@@ -203,20 +203,29 @@ class GCPFingerprintDB(AbstractFingerprintDB):
             for row in rows:
                 print(row)
 
-    def check_song_info(
-        self, song_id: int
-    ) -> tuple[Any, Any, Any, Any] | tuple[None, None, None, None]:
+    def check_song_info(self, song_id: int) -> dict:
         with self.conn.cursor() as cur:
             cur.execute(
-                "SELECT track_name, artist_names, album_name, youtube_url FROM tracks "
+                "SELECT "
+                "track_name, artist_names, album_name, album_release_date, "
+                "album_image_url, track_duration_ms, explicit, youtube_url FROM tracks "
                 "WHERE track_id = %s;",
                 (song_id,),
             )
             row = cur.fetchone()
             if row:
-                return row[0], row[1], row[2], row[3]
+                return {
+                    "track_name": row[0],
+                    "artist_names": row[1],
+                    "album_name": row[2],
+                    "album_release_date": row[3],
+                    "album_image_url": row[4],
+                    "track_duration_ms": row[5],
+                    "explicit": row[6],
+                    "youtube_url": row[7],
+                }
             else:
-                return None, None, None, None
+                return {}
 
     def get_indexed_song_ids(self) -> List[int]:
         with self.conn.cursor() as cur:
