@@ -47,6 +47,7 @@ def push_to_pub_sub():
     check = check_if_song_exists(app, title=title, artist=artist)
 
     if check["status"] == "success":
+        logging.info(f"Song does not exist, pushing to Pub/Sub: {title} by {artist}")
         message_json = json.dumps(data)
         publisher.publish(topic_path, message_json.encode("utf-8"))
     return jsonify(check), 200
