@@ -89,9 +89,9 @@ def process_pubsub_message():
             if not track_metadata:
                 logger.warning(f"[Song Processor] No metadata found for '{title}' by '{artist}'")
                 return "Bad Request: No metadata found for the song - probably niche song or not a song at all", 400
-            elif track_metadata['track_name'] != title or artist not in track_metadata['artist_names']:
-                logger.warning(f"[Song Processor] Metadata mismatch for '{title}' by '{artist}' - Found '{track_metadata['track_name']}' by '{track_metadata['artist_names']}'")
-                return "Bad Request: Metadata mismatch", 400
+            # elif track_metadata['track_name'] != title or artist not in track_metadata['artist_names']:
+            #     logger.warning(f"[Song Processor] Metadata mismatch for '{title}' by '{artist}' - Found '{track_metadata['track_name']}' by '{track_metadata['artist_names']}'")
+            #     return "Bad Request: Metadata mismatch", 400
             
             # Log metadata
             logger.info(f"Found metadata for '{title}' by '{artist}'")
