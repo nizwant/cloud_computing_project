@@ -5,3 +5,4 @@ google-cloud-pubsub
 requests
 spotipy
 google-cloud-secret-manager
+google-api-python-client

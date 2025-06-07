@@ -1,3 +1,5 @@
+#gcloud builds submit --tag gcr.io/cloud-computing-project-458205/song-processor
+#gcloud run deploy song-processor --image gcr.io/cloud-computing-project-458205/song-processor --platform managed --region europe-west3 --allow-unauthenticated
 from flask import Flask, request
 import base64
 import json
@@ -17,7 +19,7 @@ def get_secret(secret_id):
     """Retrieve a secret from Google Secret Manager."""
     try:
         client = secretmanager.SecretManagerServiceClient()
-        project_id = os.environ.get('GOOGLE_CLOUD_PROJECT', '100420581963')
+        project_id = 'cloud-computing-project-458205'
         name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
         response = client.access_secret_version(request={"name": name})
         return response.payload.data.decode("UTF-8")
@@ -87,8 +89,8 @@ def process_pubsub_message():
             if not track_metadata:
                 logger.warning(f"[Song Processor] No metadata found for '{title}' by '{artist}'")
                 return "Bad Request: No metadata found for the song - probably niche song or not a song at all", 400
-            elif track_metadata['track_name'] != title or track_metadata['artist_name'] != artist:
-                logger.warning(f"[Song Processor] Metadata mismatch for '{title}' by '{artist}' - Found '{track_metadata['track_name']}' by '{track_metadata['artist_name']}'")
+            elif track_metadata['track_name'] != title or artist not in track_metadata['artist_names']:
+                logger.warning(f"[Song Processor] Metadata mismatch for '{title}' by '{artist}' - Found '{track_metadata['track_name']}' by '{track_metadata['artist_names']}'")
                 return "Bad Request: Metadata mismatch", 400
             
             # Log metadata
