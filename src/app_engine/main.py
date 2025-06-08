@@ -133,4 +133,3 @@ def utility_processor():
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8080)
-    # http://localhost:8080/result?match=%7B%22track_name%22%3A%22Bohemian%20Rhapsody%22%2C%22artist_names%22%3A%22Queen%22%2C%22album_name%22%3A%22A%20Night%20at%20the%20Opera%22%2C%22album_release_date%22%3A%221975-11-21%22%2C%22album_image_url%22%3A%22https%3A%2F%2Fi.scdn.co%2Fimage%2Fab67616d0000b273a461aa96bd9a8fcd0a492aee%22%2C%22track_duration_ms%22%3A354320%2C%22explicit%22%3Afalse%2C%22youtube_url%22%3A%22https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DfJ9rUzIMcZQ%22%7D
