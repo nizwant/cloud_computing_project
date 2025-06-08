@@ -5,6 +5,7 @@ sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
 )
 
+
 def create_fingerprint_db(db_type: str = "memory"):
     if db_type == "memory":
         from abracadabra.InMemoryFingerprintDB import InMemoryFingerprintDB

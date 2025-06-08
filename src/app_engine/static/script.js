@@ -28,7 +28,7 @@ function uploadAudioFile(audioBlob) {
   })
   .catch(err => {
     console.error('Error identifying song:', err);
-    alert('An error occurred while identifying the song.');
+    // alert('An error occurred while identifying the song.');
   })
   .finally(() => {
     document.getElementById('loading-message').style.display = 'none';
@@ -42,7 +42,12 @@ window.startRecording = function () {
   audioChunks = [];
   navigator.mediaDevices.getUserMedia({ audio: true })
     .then(stream => {
-      mediaRecorder = new MediaRecorder(stream);
+      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+          mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+      } else {
+        mediaRecorder = new MediaRecorder(stream);
+      }
+
       audioChunks = [];
       mediaRecorder.start();
       document.getElementById('recording-status').style.display = 'block';
@@ -55,7 +60,7 @@ window.startRecording = function () {
         document.getElementById('recording-status').style.display = 'none';
 
         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        console.log("Duration approx (sec):", audioBlob.size / 48000 / 2); // crude estimate
+        console.log("Duration approx (sec):", audioBlob.size / 22050 / 2); // crude estimate
 
         /* Trigger a download
         const url = URL.createObjectURL(audioBlob);
@@ -72,8 +77,10 @@ window.startRecording = function () {
 
       // Stop recording after 10 seconds
       setTimeout(() => {
+        mediaRecorder.requestData(); // flush pending audio
         mediaRecorder.stop();
       }, 10000);
+
     })
     .catch(err => {
       console.error('Microphone error:', err);

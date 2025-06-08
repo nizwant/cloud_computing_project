@@ -3,6 +3,7 @@ import psycopg2
 from psycopg2.extras import execute_values
 from typing import List, Tuple, Dict
 import sys
+
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
 )
@@ -12,7 +13,6 @@ import yt_dlp
 from pydub import AudioSegment
 import numpy as np
 import re
-import datetime
 
 
 def get_secret(secret_id: str, project_id: str):

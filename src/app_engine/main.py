@@ -13,23 +13,24 @@ sys.path.insert(
 from app_engine.utils_misc import format_duration_ms, get_release_year
 from app_engine.utils_db import list_tracks_helper, check_if_song_exists
 
-import tempfile
 from io import BytesIO
 from abracadabra.recognize import recognize_song
 
 app = Flask(__name__)
 
-@app.template_filter('from_json')
+
+@app.template_filter("from_json")
 def from_json(value):
     try:
         return json.loads(value)
-    except:
+    except json.JSONDecodeError:
         try:
             # Handle the case where the string uses single quotes
             return eval(value)
-        except:
-            return {}
-        
+        except Exception as e:
+            return {"error": str(e)}
+
+
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
@@ -97,6 +98,7 @@ def push_to_pub_sub():
 #
 #     return redirect(url_for("result", match=match_str))
 
+
 @app.route("/identify", methods=["POST"])
 def identify():
     audio_file = request.files.get("audio_file")
@@ -114,7 +116,6 @@ def identify():
     return redirect(url_for("result", match=match_str))
 
 
-
 @app.route("/result")
 def result():
     # Expecting match info passed as query parameters or via session/POST
@@ -128,6 +129,7 @@ def utility_processor():
     return dict(
         format_duration_ms=format_duration_ms, get_release_year=get_release_year
     )
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8080)
