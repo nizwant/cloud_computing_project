@@ -75,20 +75,27 @@ def process_pubsub_message():
     
     try:
         # Decode message payload from base64
-        message_data = base64.b64decode(pubsub_message['data']).decode('utf-8') 
+        message_data = base64.b64decode(pubsub_message['data']).decode('utf-8')
         logger.info(f"[Song Processor] Received message data: {message_data}")
-        
+        # track_metadata = {'Track URI': 'spotify:track:6NFyWDv5CjfwuzoCkw47Xf', 'Track Name': 'Delicate',
+        #                   'Artist Name(s)': 'Taylor Swift', 'Album Name': 'reputation',
+        #                   'Album Release Date': '2017-11-10',
+        #                   'Album Image URL': 'https://i.scdn.co/image/ab67616d0000b273da5d5aeeabacacc1263c0f4b',
+        #                   'Track Duration (ms)': 232253, 'Explicit': False, 'Popularity': 84, 'Artist Genres': [],
+        #                   'youtube_url': 'https://www.youtube.com/watch?v=0KSOMA3QBU0',
+        #                   'youtube_title': 'Taylor Swift - Delicate (Official Audio)'}
+
         try:
             song_info = json.loads(message_data)
             title = song_info.get('title')
             artist = song_info.get('artist')
-            
+
             if not (title and artist):
                 logger.error("[Song Processor] Title or artist is missing in the song info")
                 return "Bad Request: Title or artist is missing", 400
-            
+
             logger.info(f"[Song Processor] Processing song: {title} by {artist}")
-            
+
             # 1. Search for song metadata via Spotify APIs
             track_metadata = get_track_metadata(title, artist)
 
@@ -98,7 +105,7 @@ def process_pubsub_message():
             # elif track_metadata['track_name'] != title or artist not in track_metadata['artist_names']:
             #     logger.warning(f"[Song Processor] Metadata mismatch for '{title}' by '{artist}' - Found '{track_metadata['track_name']}' by '{track_metadata['artist_names']}'")
             #     return "Bad Request: Metadata mismatch", 400
-            
+
             # Log metadata
             logger.info(f"[Song Processor] Found metadata for '{title}' by '{artist}': {track_metadata}")
 
@@ -120,10 +127,19 @@ def process_pubsub_message():
             # 4. Create fingerprint of the audio file
             # 5. Upload song data and fingerprint to the database
             db = create_fingerprint_db(db_type="gcp")
+            if not db:
+                logger.error("[Song Processor] Failed to create fingerprint database")
+                return "Internal Server Error: Database connection failed", 500
+            logger.info(f"[Song Processor] Successfully connected to the database")
+
             track_id = db.load_song_to_tracks(track_metadata)
+            if not track_id:
+                logger.error(f"[Song Processor] Failed to load song '{title}' by '{artist}' to the database")
+                return "Internal Server Error: Failed to load song to the database", 500
+            logger.info(f"[Song Processor] Successfully loaded song '{title}' by '{artist}' to the database with ID {track_id}")
             index_single_song_gcp(song_id = track_id,
                                   song_name = title,
-                                  youtube_url = song_info['youtube_url'],
+                                  youtube_url = track_metadata['youtube_url'],
                                   db = db,
                                   existing_ids = set(),
                                   skip_duplicates = False)
