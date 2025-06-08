@@ -13,12 +13,15 @@ import yt_dlp
 from pydub import AudioSegment
 import numpy as np
 import re
-from typing import Dict
 import logging
 from psycopg2 import sql
 from datetime import datetime
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
+
 
 def get_secret(secret_id: str, project_id: str):
     client = secretmanager.SecretManagerServiceClient()
@@ -30,6 +33,7 @@ def get_secret(secret_id: str, project_id: str):
 def sanitize_filename(name: str) -> str:
     # Replace invalid filename characters with underscore
     return re.sub(r'[<>:"/\\|?*\n\r\t]', "_", name)
+
 
 def parse_date(date_str):
     """
@@ -239,7 +243,7 @@ class GCPFingerprintDB(AbstractFingerprintDB):
         with self.conn.cursor() as cur:
             cur.execute("SELECT DISTINCT song_id FROM fingerprints;")
             return [row[0] for row in cur.fetchall()]
-        
+
     def load_song_to_tracks(self, song_info: Dict):
         with self.conn.cursor() as cursor:
             try:
@@ -248,13 +252,12 @@ class GCPFingerprintDB(AbstractFingerprintDB):
                 track_name = song_info["Track Name"]
 
                 if not original_track_uri:
-                    logger.warning(
-                        f"Skipping song due to missing 'Track URI'."
-                    )
+                    logger.warning("Skipping song due to missing 'Track URI'.")
                     return
                 if not track_name:
                     logger.warning(
-                        f"Skipping row song (URI: {original_track_uri}) due to missing 'Track Name'."
+                        f"Skipping row song (URI: {original_track_uri}) "
+                        f"due to missing 'Track Name'."
                     )
                     return
 
@@ -324,7 +327,8 @@ class GCPFingerprintDB(AbstractFingerprintDB):
                 track_id_result = cursor.fetchone()
                 if not track_id_result:
                     logger.error(
-                        f"Failed to insert or update track (URI: {original_track_uri}). Skipping genre processing for this track."
+                        f"Failed to insert or update track (URI: {original_track_uri}). "
+                        f"Skipping genre processing for this track."
                     )
                     return
 
@@ -340,7 +344,9 @@ class GCPFingerprintDB(AbstractFingerprintDB):
                         genre_id = None
                         cursor.execute(
                             sql.SQL(
-                                "INSERT INTO genres (genre_name) VALUES (%s) ON CONFLICT (genre_name) DO NOTHING RETURNING genre_id;"
+                                "INSERT INTO genres (genre_name) "
+                                "VALUES (%s) ON CONFLICT (genre_name) "
+                                "DO NOTHING RETURNING genre_id;"
                             ),
                             (genre_name,),
                         )
@@ -360,7 +366,8 @@ class GCPFingerprintDB(AbstractFingerprintDB):
                                 genre_id = result[0]
                             else:
                                 logger.error(
-                                    f"Could not find or insert genre: '{genre_name}' for track ID {track_id}. Skipping this genre link."
+                                    f"Could not find or insert genre: '{genre_name}' "
+                                    f"for track ID {track_id}. Skipping this genre link."
                                 )
                                 continue
 
@@ -368,23 +375,25 @@ class GCPFingerprintDB(AbstractFingerprintDB):
                         try:
                             cursor.execute(
                                 sql.SQL(
-                                    "INSERT INTO track_genres (track_id, genre_id) VALUES (%s, %s) ON CONFLICT (track_id, genre_id) DO NOTHING;"
+                                    "INSERT INTO track_genres (track_id, genre_id) VALUES (%s, %s) "
+                                    "ON CONFLICT (track_id, genre_id) DO NOTHING;"
                                 ),
                                 (track_id, genre_id),
                             )
-                            if (
-                                    cursor.rowcount > 0
-                            ):  # rowcount is 1 if inserted, 0 if conflict and did nothing
-                                linked_track_genres += 1
-                                # logger.info(f"Linked track ID {track_id} to genre ID {genre_id} ('{genre_name}')")
+                            # if (
+                            #     cursor.rowcount > 0
+                            # ):  # rowcount is 1 if inserted, 0 if conflict and did nothing
+                            #     linked_track_genres += 1
                         except psycopg2.Error as link_err:
                             logger.error(
-                                f"Error linking track ID {track_id} to genre ID {genre_id} ('{genre_name}'): {link_err}"
+                                f"Error linking track ID {track_id} "
+                                f"to genre ID {genre_id} ('{genre_name}'): {link_err}"
                             )
 
             except psycopg2.Error as db_err:
                 logger.error(
-                    f"Database error processing song (Track URI: {song_info['Track URI']}): {db_err}"
+                    f"Database error processing song "
+                    f"(Track URI: {song_info['Track URI']}): {db_err}"
                 )
                 self.conn.rollback()  # Rollback current transaction segment
                 # Decide if you want to continue with the next row or stop
