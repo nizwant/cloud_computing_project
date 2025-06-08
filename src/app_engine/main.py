@@ -1,12 +1,36 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 import logging
 import json
 from google.cloud import pubsub_v1
 
-from utils_misc import format_duration_ms, get_release_year
-from utils_db import list_tracks_helper, check_if_song_exists
+import sys
+import os
+
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
+)
+
+from app_engine.utils_misc import format_duration_ms, get_release_year
+from app_engine.utils_db import list_tracks_helper, check_if_song_exists
+
+from io import BytesIO
+from abracadabra.recognize import recognize_song
+import ast
 
 app = Flask(__name__)
+
+
+@app.template_filter("from_json")
+def from_json(value):
+    try:
+        return json.loads(value)
+    except json.JSONDecodeError:
+        try:
+            # Handle the case where the string uses single quotes
+            return ast.literal_eval(value)
+        except Exception as e:
+            return {"error": str(e)}
+
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -48,6 +72,30 @@ def push_to_pub_sub():
         message_json = json.dumps(data)
         publisher.publish(topic_path, message_json.encode("utf-8"))
     return jsonify(check), 200
+
+
+@app.route("/identify", methods=["POST"])
+def identify():
+    audio_file = request.files.get("audio_file")
+    if not audio_file:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    audio_buffer = BytesIO(audio_file.read())
+
+    result = recognize_song(audio_buffer, db_type="gcp")
+
+    if result is None:
+        return redirect(url_for("result", match="No match found"))
+
+    match_str = str(result)
+    return redirect(url_for("result", match=match_str))
+
+
+@app.route("/result")
+def result():
+    # Expecting match info passed as query parameters or via session/POST
+    match = request.args.get("match")  # e.g. JSON string or simple text
+    return render_template("result.html", match=match)
 
 
 # --- Helper for Jinja2 template to access utility functions ---

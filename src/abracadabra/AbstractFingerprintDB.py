@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple
-from src.abracadabra.fingerprint import Fingerprint
+from abracadabra.fingerprint import Fingerprint
 
 
 class AbstractFingerprintDB(ABC):

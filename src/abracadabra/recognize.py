@@ -1,14 +1,26 @@
 import os
 from collections import Counter
+import sys
 
-from src.abracadabra.fingerprint import get_peaks, generate_fingerprints
-from src.abracadabra.database import create_fingerprint_db
-from src.abracadabra.AbstractFingerprintDB import AbstractFingerprintDB
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
+)
+
+from abracadabra.fingerprint import get_peaks, generate_fingerprints
+from abracadabra.database import create_fingerprint_db
+from abracadabra.AbstractFingerprintDB import AbstractFingerprintDB
 from pydub import AudioSegment
 import numpy as np
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
+from typing import Union
+from io import BytesIO
+
+# from pydub.utils import which
+# AudioSegment.converter = which("ffmpeg")
+# import pydub
+# pydub.AudioSegment.ffmpeg = "ffmpeg"
 
 
 def process_single_song(
@@ -94,16 +106,25 @@ def index_all_songs(
 
 
 def recognize_song(
-    query_path: str, db: AbstractFingerprintDB, sr: int = 22050
-) -> tuple[int, int] | None:
-    audio = AudioSegment.from_file(query_path)
+    query: Union[str, BytesIO],
+    db: AbstractFingerprintDB = None,
+    sr: int = 22050,
+    db_type: str = "gcp",
+) -> tuple[int, int] | dict | None:
+    if db is None:
+        db = create_fingerprint_db(db_type)
+
+    audio = AudioSegment.from_file(query)
     audio = audio.set_channels(1).set_frame_rate(sr)
     samples = np.array(audio.get_array_of_samples()).astype(np.float32) / 32768.0
     peaks = get_peaks(samples)
     query_fp = generate_fingerprints(peaks)
     matches = db.get_matches(query_fp)
+
     if not matches:
         return None
+
     offset_counts = Counter(matches)
     (song_id, offset), score = offset_counts.most_common(1)[0]
-    return song_id, score
+
+    return db.check_song_info(song_id) if db_type == "gcp" else (song_id, score)
