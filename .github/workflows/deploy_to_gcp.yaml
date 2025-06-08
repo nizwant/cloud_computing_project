@@ -27,4 +27,4 @@ jobs:
 
     - name: Deploy to App Engine
       run: |
-        gcloud app deploy src/app_engine/app.yaml --quiet
+        gcloud app deploy src/app.yaml --quiet
