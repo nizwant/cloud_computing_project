@@ -1,127 +1,252 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify Tracks</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+{% extends "base_template.html" %}
+
+{% block style %}
     <link rel="stylesheet" href="/static/list_songs_style.css">
-</head>
-<body class="bg-gray-900 text-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <header class="mb-8 text-center">
-            <h1 class="text-4xl font-bold text-green-400">My Spotify Tracks</h1>
-            <p class="text-gray-400">Browse your curated collection</p>
+{% endblock %}
+
+{% block content %}
+    <div class="custom-container">
+        <header>
+            <h1 class="custom-header-title">Songs that application is able to match</h1>
+            <p>This page allows you to search for songs that our application can match. While it wouldn't be useful in a real-life scenario, it is handy for showcasing the project and for debugging purposes.</p>
         </header>
 
-        {% if tracks %}
-        <div class="grid grid-cols-1 gap-6"> {% for track in tracks %}
-            <div class="track-card bg-gray-800 rounded-lg shadow-lg p-4 flex items-center space-x-4 transition-all duration-300">
-                <img src="{{ track.album_image_url }}"
-                     alt="Album art for {{ track.name }}"
-                     class="album-art w-20 h-20 md:w-24 md:h-24 rounded-md object-cover flex-shrink-0"
-                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='no_image.jpg') }}';">
+        <div class="search-filter-sort-section">
+            <form action="{{ url_for('list_songs') }}" method="get" class="search-form" id="filter-form">
+                <div class="search-input-group">
+                    <input type="text" name="query" placeholder="Search by title or artist..."
+                        value="{{ request.args.get('query', '') }}" class="search-input">
+                    <button type="submit" class="search-button">Search</button>
+                </div>
 
-                <div class="track-info flex-grow min-w-0"> <h2 class="track-name text-lg md:text-xl font-semibold text-green-300 truncate" title="{{ track.name }}">{{ track.name }}</h2>
-                    <p class="artist-year text-sm text-gray-400 truncate" title="{{ track.artists }} &bull; {{ track.release_year }}">
+                <div class="filter-sort-options">
+                    <div class="sort-dropdown">
+                        <label for="sort_by">Sort by:</label>
+                        <select name="sort_by" id="sort_by" onchange="this.form.submit()">
+                            <option value="popularity_desc" {% if sort_by == 'popularity_desc' %}selected{% endif %}>
+                                Popularity (Descending)</option>
+                            <option value="popularity_asc" {% if sort_by == 'popularity_asc' %}selected{% endif %}>
+                                Popularity (Ascending)</option>
+                            <option value="track_name_asc" {% if sort_by == 'track_name_asc' %}selected{% endif %}>Track
+                                Name (A-Z)</option>
+                            <option value="track_name_desc" {% if sort_by == 'track_name_desc' %}selected{% endif %}>Track
+                                Name (Z-A)</option>
+                            <option value="album_release_date_desc"
+                                {% if sort_by == 'album_release_date_desc' %}selected{% endif %}>Release Date (Newest)
+                            </option>
+                            <option value="album_release_date_asc"
+                                {% if sort_by == 'album_release_date_asc' %}selected{% endif %}>Release Date (Oldest)
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="tags-filter">
+                        <label>Filter by genres:</label>
+                        <div class="multi-select-dropdown">
+                            <button type="button" class="dropdown-toggle" id="genreDropdownToggle" aria-haspopup="true" aria-expanded="false">
+                                <span id="selectedGenreText">
+                                    {% if selected_genres %}
+                                        {{ selected_genres | join(', ') }}
+                                    {% else %}
+                                        All Genres
+                                    {% endif %}
+                                </span>
+                                <span class="dropdown-arrow">&#9660;</span> {# Down arrow character #}
+                            </button>
+                            <div class="genre-checkbox-list" id="genreCheckboxList">
+                                <button type="button" class="clear-genres-button" onclick="clearGenreSelections();">Clear Genres</button>
+                                {% for genre in all_genres %}
+                                    <label class="genre-checkbox-item">
+                                        <input type="checkbox" name="tags" value="{{ genre.genre_name }}"
+                                            {% if genre.genre_name in selected_genres %}checked{% endif %} onchange="updateGenreSelectionText();">
+                                        <span>{{ genre.genre_name }}</span>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="items-per-page-dropdown">
+                        <label for="items_per_page">Tracks per page:</label>
+                        <select name="items_per_page" id="items_per_page" onchange="this.form.submit()">
+                            <option value="10" {% if items_per_page == 10 %}selected{% endif %}>10</option>
+                            <option value="20" {% if items_per_page == 20 %}selected{% endif %}>20</option>
+                            <option value="50" {% if items_per_page == 50 %}selected{% endif %}>50</option>
+                            <option value="100" {% if items_per_page == 100 %}selected{% endif %}>100</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {% if tracks %}
+        <div class="custom-grid"> {% for track in tracks %}
+            <div class="custom-track-card">
+                <img src="{{ track.album_image_url }}" alt="Album art for {{ track.name }}" class="album-art"
+                    onerror="this.onerror=null; this.src='{{ url_for('static', filename='no_image.jpg') }}';">
+
+                <div class="track-info">
+                    <h2 class="track-name" title="{{ track.name }}">{{ track.name }}</h2>
+                    <p class="artist-year" title="{{ track.artists }} &bull; {{ track.release_year }}">
                         {{ track.artists }} &bull; {{ track.release_year }}
                     </p>
-                     {% if track.explicit %}
-                        <span class="explicit-badge text-xs bg-red-600 text-white px-2 py-0.5 rounded-full mt-1 inline-block">Explicit</span>
+                    {% if track.explicit %}
+                        <span class="explicit-badge">Explicit</span>
                     {% endif %}
                 </div>
 
-                <div class="track-duration text-right flex-shrink-0 ml-auto">
-                    <p class="text-md md:text-lg font-medium text-gray-300">{{ track.duration }}</p>
+                <div class="track-duration">
+                    <p class="track-text">{{ track.duration }}</p>
                 </div>
             </div>
             {% endfor %}
         </div>
 
         {% if total_pages > 1 %}
-        <nav class="pagination-nav mt-12 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0" aria-label="Pagination">
-            <div class="pagination-info text-sm text-gray-400">
-                Showing <span class="font-medium">{{ tracks | length }}</span> of <span class="font-medium">{{ total_tracks }}</span> results
+        <nav class="pagination-nav" aria-label="Pagination">
+            <div class="pagination-info">
+                Showing <span class="pagination-count">{{ tracks | length }}</span> of <span
+                    class="pagination-count">{{ total_tracks }}</span> results
             </div>
-            <ul class="pagination-links inline-flex items-center -space-x-px">
+            <ul class="pagination-links">
                 <li>
-                    <a href="{{ url_for('list_songs', page=current_page - 1) if current_page > 1 else '#' }}"
-                       class="pagination-button prev-button inline-flex items-center justify-center py-2 px-3 ml-0 leading-tight rounded-l-lg
-                              {% if current_page == 1 %} bg-gray-700 text-gray-500 cursor-not-allowed
-                              {% else %} bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white {% endif %}">
+                    <a href="{{ url_for('list_songs', page=current_page - 1, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.getlist('tags'), items_per_page=items_per_page) if current_page > 1 else '#' }}"
+                        class="pagination-button prev-button {% if current_page == 1 %}cursor-not-allowed{% endif %}">
                         <span class="sr-only">Previous</span>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        <svg class="pagination-icon" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                clip-rule="evenodd"></path>
+                        </svg>
                     </a>
                 </li>
 
-                {# Pagination logic for displaying page numbers #}
-                {% set page_window = 2 %} {# Number of pages to show around current page #}
+                {% set page_window = 2 %}
                 {% set start_page = [1, current_page - page_window] | max %}
                 {% set end_page = [total_pages, current_page + page_window] | min %}
 
                 {% if start_page > 1 %}
-                    <li>
-                        <a href="{{ url_for('list_songs', page=1) }}"
-                           class="pagination-button page-number-button py-2 px-3 leading-tight bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white">1</a>
-                    </li>
-                    {% if start_page > 2 %}
-                    <li>
-                        <span class="pagination-ellipsis py-2 px-3 leading-tight bg-gray-700 text-gray-500">...</span>
-                    </li>
-                    {% endif %}
+                <li>
+                    <a href="{{ url_for('list_songs', page=1, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.getlist('tags'), items_per_page=items_per_page) }}"
+                        class="pagination-button page-number-button">
+                        1
+                    </a>
+                </li>
+                {% if start_page > 2 %}
+                <li>
+                    <span class="pagination-ellipsis">...</span>
+                </li>
+                {% endif %}
                 {% endif %}
 
                 {% for p in range(start_page, end_page + 1) %}
                 <li>
-                    <a href="{{ url_for('list_songs', page=p) }}"
-                       class="pagination-button page-number-button py-2 px-3 leading-tight
-                              {% if p == current_page %} bg-green-500 text-white hover:bg-green-600
-                              {% else %} bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white {% endif %}">
+                    <a href="{{ url_for('list_songs', page=p, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.getlist('tags'), items_per_page=items_per_page) }}"
+                        class="pagination-button page-number-button {% if p == current_page %}active{% endif %}">
                         {{ p }}
                     </a>
                 </li>
                 {% endfor %}
 
                 {% if end_page < total_pages %}
-                    {% if end_page < total_pages - 1 %}
-                    <li>
-                        <span class="pagination-ellipsis py-2 px-3 leading-tight bg-gray-700 text-gray-500">...</span>
-                    </li>
-                    {% endif %}
-                    <li>
-                        <a href="{{ url_for('list_songs', page=total_pages) }}"
-                           class="pagination-button page-number-button py-2 px-3 leading-tight bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white">{{ total_pages }}</a>
-                    </li>
+                {% if end_page < total_pages - 1 %}
+                <li>
+                    <span class="pagination-ellipsis">...</span>
+                </li>
+                {% endif %}
+                <li>
+                    <a href="{{ url_for('list_songs', page=total_pages, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.getlist('tags'), items_per_page=items_per_page) }}"
+                        class="pagination-button page-number-button">
+                        {{ total_pages }}
+                    </a>
+                </li>
                 {% endif %}
 
                 <li>
-                    <a href="{{ url_for('list_songs', page=current_page + 1) if current_page < total_pages else '#' }}"
-                       class="pagination-button next-button inline-flex items-center justify-center py-2 px-3 leading-tight rounded-r-lg
-                              {% if current_page == total_pages %} bg-gray-700 text-gray-500 cursor-not-allowed
-                              {% else %} bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white {% endif %}">
+                    <a href="{{ url_for('list_songs', page=current_page + 1, query=request.args.get('query', ''), sort_by=sort_by, tags=request.args.getlist('tags'), items_per_page=items_per_page) if current_page < total_pages else '#' }}"
+                        class="pagination-button next-button {% if current_page == total_pages %}cursor-not-allowed{% endif %}">
                         <span class="sr-only">Next</span>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                        <svg class="pagination-icon" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd"></path>
+                        </svg>
                     </a>
                 </li>
             </ul>
         </nav>
         {% endif %}
         {% else %}
-        <div class="no-tracks-message text-center py-12">
-            <svg class="mx-auto h-12 w-12 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+        <div class="no-tracks-message">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
             </svg>
-            <h3 class="mt-2 text-xl font-medium text-gray-300">No tracks found</h3>
-            <p class="mt-1 text-sm text-gray-500">
-                It looks like there's no data in the database, or we couldn't fetch it.
+            <h3>No tracks found</h3>
+            <p>
+                It looks like there's no data in the database with those parameters, or we couldn't fetch it.
             </p>
         </div>
         {% endif %}
-
-        <footer class="app-footer">
-            <p>Track Viewer App &copy; 2025</p>
-        </footer>
     </div>
-    </body>
-</html>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownToggle = document.getElementById('genreDropdownToggle');
+            const checkboxList = document.getElementById('genreCheckboxList');
+            const form = document.getElementById('filter-form');
+            const checkboxes = checkboxList.querySelectorAll('input[type="checkbox"]');
+
+            // Function to update the text displayed on the dropdown button
+            window.updateGenreSelectionText = function() {
+                const selected = Array.from(checkboxes)
+                                      .filter(checkbox => checkbox.checked)
+                                      .map(checkbox => checkbox.value);
+                const selectedTextSpan = document.getElementById('selectedGenreText');
+
+                if (selected.length === 0) {
+                    selectedTextSpan.textContent = "All Genres";
+                } else if (selected.length <= 2) { // Show up to 2 selected genres
+                    selectedTextSpan.textContent = selected.join(', ');
+                } else { // Show count if more than 2
+                    selectedTextSpan.textContent = `${selected.length} Genres Selected`;
+                }
+            }
+
+            // Toggle dropdown visibility
+            dropdownToggle.addEventListener('click', function() {
+                checkboxList.classList.toggle('show');
+                this.setAttribute('aria-expanded', checkboxList.classList.contains('show'));
+            });
+
+            // Close dropdown if clicked outside
+            document.addEventListener('click', function(event) {
+                if (!dropdownToggle.contains(event.target) && !checkboxList.contains(event.target)) {
+                    checkboxList.classList.remove('show');
+                    dropdownToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Handle "Clear Genres" button
+            window.clearGenreSelections = function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                updateGenreSelectionText(); // Update text immediately
+                form.submit(); // Submit the form to apply changes
+            }
+
+            // Initial text update on page load
+            updateGenreSelectionText();
+
+            // When a checkbox is changed, re-submit the form
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    form.submit();
+                });
+            });
+        });
+    </script>
+{% endblock %}
