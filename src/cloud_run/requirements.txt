@@ -6,3 +6,7 @@ requests
 spotipy
 google-cloud-secret-manager
 google-api-python-client
+numpy
+pydub
+scipy
+librosa
