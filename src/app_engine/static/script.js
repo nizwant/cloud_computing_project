@@ -57,7 +57,7 @@ window.startRecording = function () {
         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
         console.log("Duration approx (sec):", audioBlob.size / 48000 / 2); // crude estimate
 
-        // Trigger a download
+        /* Trigger a download
         const url = URL.createObjectURL(audioBlob);
         const a = document.createElement('a');
         a.href = url;
@@ -66,7 +66,7 @@ window.startRecording = function () {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-
+        */
         uploadAudioFile(audioBlob);
       };
 

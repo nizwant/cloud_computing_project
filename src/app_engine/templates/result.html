@@ -5,30 +5,29 @@
   <h2>Song Match Result</h2>
   
   {% if match %}
-<!--    {% set match_data = match %}-->
-<!--    {% set match_data = match|replace("'", '"')|from_json %}-->
+    {% set match_data = match|replace("'", '"')|from_json %}
 
     <div class="song-card">
-      {% if match.album_image_url %}
-        <img src="{{ match.album_image_url }}" alt="{{ match.album_name }}" class="album-cover">
+      {% if match_data.album_image_url %}
+        <img src="{{ match_data.album_image_url }}" alt="{{ match_data.album_name }}" class="album-cover">
       {% endif %}
       
       <div class="song-info">
-        <h3>{{ match.track_name }}</h3>
-        <p class="artist">{{ match.artist_names }}</p>
-        <p class="album">Album: {{ match.album_name }}</p>
-        <p class="release-date">Released: {{ match.album_release_date }}</p>
+        <h3>{{ match_data.track_name }}</h3>
+        <p class="artist">{{ match_data.artist_names }}</p>
+        <p class="album">Album: {{ match_data.album_name }}</p>
+        <p class="release-date">Released: {{ match_data.album_release_date }}</p>
         
-        {% if match.track_duration_ms %}
-          <p class="duration">Duration: {{ format_duration_ms(match.track_duration_ms) }}</p>
+        {% if match_data.track_duration_ms %}
+          <p class="duration">Duration: {{ format_duration_ms(match_data.track_duration_ms) }}</p>
         {% endif %}
         
-        {% if match.explicit %}
+        {% if match_data.explicit %}
           <span class="explicit-tag">Explicit</span>
         {% endif %}
         
-        {% if match.youtube_url %}
-          <a href="{{ match.youtube_url }}" class="youtube-link" target="_blank">
+        {% if match_data.youtube_url %}
+          <a href="{{ match_data.youtube_url }}" class="youtube-link" target="_blank">
             Watch on YouTube
           </a>
         {% endif %}
