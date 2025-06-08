@@ -10,3 +10,4 @@ numpy
 pydub
 scipy
 librosa
+psycopg2
