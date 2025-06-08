@@ -13,11 +13,24 @@ sys.path.insert(
 from app_engine.utils_misc import format_duration_ms, get_release_year
 from app_engine.utils_db import list_tracks_helper, check_if_song_exists
 
-import tempfile
-
+from io import BytesIO
 from abracadabra.recognize import recognize_song
+import ast
 
 app = Flask(__name__)
+
+
+@app.template_filter("from_json")
+def from_json(value):
+    try:
+        return json.loads(value)
+    except json.JSONDecodeError:
+        try:
+            # Handle the case where the string uses single quotes
+            return ast.literal_eval(value)
+        except Exception as e:
+            return {"error": str(e)}
+
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -67,23 +80,14 @@ def identify():
     if not audio_file:
         return jsonify({"error": "No file uploaded"}), 400
 
-    # Extract original file extension for pydub
-    filename = audio_file.filename
-    ext = os.path.splitext(filename)[1].lower()  # e.g. '.mp3', '.wav'
+    audio_buffer = BytesIO(audio_file.read())
 
-    # Create a temporary file with the original extension
-    with tempfile.NamedTemporaryFile(suffix=ext, delete=True) as temp_file:
-        audio_file.save(temp_file.name)
-
-        # Call your recognize_song function on this temp file
-        result = recognize_song(temp_file.name)
+    result = recognize_song(audio_buffer, db_type="gcp")
 
     if result is None:
         return redirect(url_for("result", match="No match found"))
 
-    # If result is a dict, convert to string or jsonify
-    match_str = str(result)  # or json.dumps(result) if needed
-
+    match_str = str(result)
     return redirect(url_for("result", match=match_str))
 
 

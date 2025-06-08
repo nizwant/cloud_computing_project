@@ -2,6 +2,11 @@ import os
 import psycopg2
 from psycopg2.extras import execute_values
 from typing import List, Tuple, Dict
+import sys
+
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
+)
 from abracadabra.AbstractFingerprintDB import AbstractFingerprintDB
 from google.cloud import secretmanager
 import yt_dlp
@@ -200,7 +205,7 @@ class GCPFingerprintDB(AbstractFingerprintDB):
                     "track_name": row[0],
                     "artist_names": row[1],
                     "album_name": row[2],
-                    "album_release_date": row[3],
+                    "album_release_date": row[3].isoformat() if row[3] else None,
                     "album_image_url": row[4],
                     "track_duration_ms": row[5],
                     "explicit": row[6],
