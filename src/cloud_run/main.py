@@ -10,6 +10,12 @@ from spotify_handler import get_track_metadata
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.cloud import secretmanager
+import sys
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
+)
+from abracadabra.database import create_fingerprint_db
+from abracadabra.recognize import index_single_song_gcp
 
 app = Flask(__name__)
 
@@ -55,7 +61,7 @@ def fetch_youtube_video(title, artist):
 @app.route("/", methods=["POST"])
 def process_pubsub_message():
     envelope = request.get_json()
-
+    logger.info(f"[Song Processor] Received envelope: {envelope}")
     if not envelope or "message" not in envelope:
         logger.error("No Pub/Sub message received")
         return "[Song Processor] Bad Request: no Pub/Sub message received", 400
@@ -127,12 +133,21 @@ def process_pubsub_message():
                 logger.error(f"YouTube search error: {str(e)}")
                 return "Internal Server Error: YouTube search failed", 500
 
-            # 3. TODO: Download m4a file from YouTube
-            # 4. TODO: Create fingerprint of the audio file
-            # 5. TODO: Upload song data and fingerprint to the database 
-            
+            # 3. Download m4a file from YouTube
+            # 4. Create fingerprint of the audio file
+            # 5. Upload song data and fingerprint to the database
+            db = create_fingerprint_db(db_type="gcp")
+            track_id = db.load_song_to_tracks(song_info)
+            index_single_song_gcp(song_id = track_id,
+                                  song_name = title,
+                                  youtube_url = song_info['youtube_url'],
+                                  db = db,
+                                  existing_ids = set(),
+                                  skip_duplicates = False)
+            logger.info(f"[Song Processor] Successfully processed song: {title} by {artist}")
+
             return "OK", 200
-            
+
         except json.JSONDecodeError as e:
             logger.error(f"[Song Processor] Invalid JSON: {message_data} - Error: {str(e)}")
             # Return 200 to acknowledge invalid messages
@@ -141,7 +156,7 @@ def process_pubsub_message():
     except Exception as e:
         logger.error(f"[Song Processor] Error: {str(e)}")
         # Return 200 to stop the retry cycle
-        return "Success: Error logged", 200    
+        return "Success: Error logged", 200
     
 @app.route('/health', methods=['GET'])
 def health():
