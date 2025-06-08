@@ -15,6 +15,7 @@ from app_engine.utils_db import list_tracks_helper, check_if_song_exists
 
 from io import BytesIO
 from abracadabra.recognize import recognize_song
+import ast
 
 app = Flask(__name__)
 
@@ -26,7 +27,7 @@ def from_json(value):
     except json.JSONDecodeError:
         try:
             # Handle the case where the string uses single quotes
-            return eval(value)
+            return ast.literal_eval(value)
         except Exception as e:
             return {"error": str(e)}
 
@@ -73,32 +74,6 @@ def push_to_pub_sub():
     return jsonify(check), 200
 
 
-# @app.route("/identify", methods=["POST"])
-# def identify():
-#     audio_file = request.files.get("audio_file")
-#     if not audio_file:
-#         return jsonify({"error": "No file uploaded"}), 400
-#
-#     # Extract original file extension for pydub
-#     filename = audio_file.filename
-#     ext = os.path.splitext(filename)[1].lower()  # e.g. '.mp3', '.wav'
-#
-#     # Create a temporary file with the original extension
-#     with tempfile.NamedTemporaryFile(suffix=ext, delete=True) as temp_file:
-#         audio_file.save(temp_file.name)
-#
-#         # Call your recognize_song function on this temp file
-#         result = recognize_song(temp_file.name)
-#
-#     if result is None:
-#         return redirect(url_for("result", match="No match found"))
-#
-#     # If result is a dict, convert to string or jsonify
-#     match_str = str(result)  # or json.dumps(result) if needed
-#
-#     return redirect(url_for("result", match=match_str))
-
-
 @app.route("/identify", methods=["POST"])
 def identify():
     audio_file = request.files.get("audio_file")
@@ -129,7 +104,3 @@ def utility_processor():
     return dict(
         format_duration_ms=format_duration_ms, get_release_year=get_release_year
     )
-
-
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8080)
