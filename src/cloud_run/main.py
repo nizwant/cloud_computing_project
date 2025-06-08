@@ -188,8 +188,3 @@ def process_pubsub_message():
 def health():
     """Health check endpoint."""
     return "Healthy", 200
-
-
-if __name__ == "__main__":
-    PORT = int(os.getenv("PORT", 8080))
-    app.run(host="0.0.0.0", port=PORT)
