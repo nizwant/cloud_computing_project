@@ -19,7 +19,7 @@ def client():
 
 def test_pubsub_handler_success(client):
     """Test handling a valid Pub/Sub message with a YouTube URL"""
-    message = {"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
+    message = {"title": "imgonnagetyouback", "artist": "Taylor Swift"}
     data = json.dumps(
         {"message": {"data": base64.b64encode(json.dumps(message).encode()).decode()}}
     )
