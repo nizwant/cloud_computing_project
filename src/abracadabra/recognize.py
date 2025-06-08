@@ -14,7 +14,13 @@ import numpy as np
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
+from typing import Union
+from io import BytesIO
 
+# from pydub.utils import which
+# AudioSegment.converter = which("ffmpeg")
+# import pydub
+# pydub.AudioSegment.ffmpeg = "ffmpeg"
 
 def process_single_song(
     db: AbstractFingerprintDB, song_id: int, path: str, title: str
@@ -98,26 +104,51 @@ def index_all_songs(
     return db
 
 
+# def recognize_song(
+#     query_path: str,
+#     db: AbstractFingerprintDB = None,
+#     sr: int = 22050,
+#     db_type: str = "gcp",
+# ) -> tuple[int, int] | dict | None:
+#     if db is None:
+#         db = create_fingerprint_db(db_type)
+#     audio = AudioSegment.from_file(query_path)
+#     audio = audio.set_channels(1).set_frame_rate(sr)
+#     samples = np.array(audio.get_array_of_samples()).astype(np.float32) / 32768.0
+#     peaks = get_peaks(samples)
+#     query_fp = generate_fingerprints(peaks)
+#     matches = db.get_matches(query_fp)
+#     if not matches:
+#         return None
+#     offset_counts = Counter(matches)
+#     (song_id, offset), score = offset_counts.most_common(1)[0]
+#
+#     if db_type == "gcp":
+#         return db.check_song_info(song_id)
+#     else:
+#         return song_id, score
+
 def recognize_song(
-    query_path: str,
+    query: Union[str, BytesIO],
     db: AbstractFingerprintDB = None,
     sr: int = 22050,
     db_type: str = "gcp",
 ) -> tuple[int, int] | dict | None:
     if db is None:
         db = create_fingerprint_db(db_type)
-    audio = AudioSegment.from_file(query_path)
+
+    audio = AudioSegment.from_file(query)
     audio = audio.set_channels(1).set_frame_rate(sr)
     samples = np.array(audio.get_array_of_samples()).astype(np.float32) / 32768.0
     peaks = get_peaks(samples)
     query_fp = generate_fingerprints(peaks)
     matches = db.get_matches(query_fp)
+
     if not matches:
         return None
+
     offset_counts = Counter(matches)
     (song_id, offset), score = offset_counts.most_common(1)[0]
 
-    if db_type == "gcp":
-        return db.check_song_info(song_id)
-    else:
-        return song_id, score
+    return db.check_song_info(song_id) if db_type == "gcp" else (song_id, score)
+
