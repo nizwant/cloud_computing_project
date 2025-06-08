@@ -13,6 +13,14 @@ import yt_dlp
 from pydub import AudioSegment
 import numpy as np
 import re
+import logging
+from psycopg2 import sql
+from datetime import datetime
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
 def get_secret(secret_id: str, project_id: str):
@@ -25,6 +33,23 @@ def get_secret(secret_id: str, project_id: str):
 def sanitize_filename(name: str) -> str:
     # Replace invalid filename characters with underscore
     return re.sub(r'[<>:"/\\|?*\n\r\t]', "_", name)
+
+
+def parse_date(date_str):
+    """
+    Parses a date string into a datetime.date object.
+    Handles empty or invalid date strings by returning None.
+    """
+    if not date_str:
+        return None
+    try:
+        if len(date_str) == 10:  # YYYY-MM-DD
+            return datetime.strptime(date_str, "%Y-%m-%d").date()
+        else:
+            return None
+    except ValueError:
+        print(f"Warning: Could not parse date string: {date_str}. Storing as NULL.")
+        return None
 
 
 class GCPFingerprintDB(AbstractFingerprintDB):
@@ -218,6 +243,170 @@ class GCPFingerprintDB(AbstractFingerprintDB):
         with self.conn.cursor() as cur:
             cur.execute("SELECT DISTINCT song_id FROM fingerprints;")
             return [row[0] for row in cur.fetchall()]
+
+    def load_song_to_tracks(self, song_info: Dict):
+        with self.conn.cursor() as cursor:
+            try:
+                # 1. Extract and prepare track data
+                original_track_uri = song_info["Track URI"]
+                track_name = song_info["Track Name"]
+
+                if not original_track_uri:
+                    logger.warning("Skipping song due to missing 'Track URI'.")
+                    return
+                if not track_name:
+                    logger.warning(
+                        f"Skipping row song (URI: {original_track_uri}) "
+                        f"due to missing 'Track Name'."
+                    )
+                    return
+
+                artist_names = song_info["Artist Name(s)"]
+                album_name = song_info["Album Name"]
+                album_release_date_str = song_info["Album Release Date"]
+                album_image_url = song_info["Album Image URL"]
+
+                track_duration_ms = song_info["Track Duration (ms)"]
+
+                explicit = song_info["Explicit"]
+
+                popularity = song_info["Popularity"]
+
+                youtube_title = song_info["youtube_title"]
+                youtube_url = song_info["youtube_url"]
+                artist_genres = song_info["Artist Genres"]
+
+                album_release_date = parse_date(album_release_date_str)
+
+                logger.info(
+                    f"Processing song: {track_name} by {artist_names} (URI: {original_track_uri})"
+                )
+
+                # 2. Insert/Update Track and get track_id
+                track_sql = sql.SQL(
+                    """
+                    INSERT INTO tracks (
+                        original_track_uri, track_name, artist_names, album_name,
+                        album_release_date, album_image_url, track_duration_ms,
+                        explicit, popularity, youtube_title, youtube_url
+                    ) VALUES (
+                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    )
+                    ON CONFLICT (original_track_uri) DO UPDATE SET
+                        track_name = EXCLUDED.track_name,
+                        artist_names = EXCLUDED.artist_names,
+                        album_name = EXCLUDED.album_name,
+                        album_release_date = EXCLUDED.album_release_date,
+                        album_image_url = EXCLUDED.album_image_url,
+                        track_duration_ms = EXCLUDED.track_duration_ms,
+                        explicit = EXCLUDED.explicit,
+                        popularity = EXCLUDED.popularity,
+                        youtube_title = EXCLUDED.youtube_title,
+                        youtube_url = EXCLUDED.youtube_url,
+                        updated_at = CURRENT_TIMESTAMP
+                    RETURNING track_id, (xmax = 0) AS inserted;
+                """
+                )
+
+                cursor.execute(
+                    track_sql,
+                    (
+                        original_track_uri,
+                        track_name,
+                        artist_names,
+                        album_name,
+                        album_release_date,
+                        album_image_url,
+                        track_duration_ms,
+                        explicit,
+                        popularity,
+                        youtube_title,
+                        youtube_url,
+                    ),
+                )
+                track_id_result = cursor.fetchone()
+                if not track_id_result:
+                    logger.error(
+                        f"Failed to insert or update track (URI: {original_track_uri}). "
+                        f"Skipping genre processing for this track."
+                    )
+                    return
+
+                track_id, was_inserted = track_id_result
+
+                # 3. Process and Insert Genres and Track-Genre links
+                if len(artist_genres) != 0:
+                    for genre_name in artist_genres:
+                        if not genre_name:
+                            continue
+
+                        # a. Insert Genre if not exists, and get genre_id
+                        genre_id = None
+                        cursor.execute(
+                            sql.SQL(
+                                "INSERT INTO genres (genre_name) "
+                                "VALUES (%s) ON CONFLICT (genre_name) "
+                                "DO NOTHING RETURNING genre_id;"
+                            ),
+                            (genre_name,),
+                        )
+                        result = cursor.fetchone()
+                        if result:
+                            genre_id = result[0]
+                            # logger.info(f"Inserted new genre: '{genre_name}' with ID: {genre_id}")
+                        else:  # Genre already existed, fetch its ID
+                            cursor.execute(
+                                sql.SQL(
+                                    "SELECT genre_id FROM genres WHERE genre_name = %s;"
+                                ),
+                                (genre_name,),
+                            )
+                            result = cursor.fetchone()
+                            if result:
+                                genre_id = result[0]
+                            else:
+                                logger.error(
+                                    f"Could not find or insert genre: '{genre_name}' "
+                                    f"for track ID {track_id}. Skipping this genre link."
+                                )
+                                continue
+
+                        # b. Insert Track-Genre link
+                        try:
+                            cursor.execute(
+                                sql.SQL(
+                                    "INSERT INTO track_genres (track_id, genre_id) VALUES (%s, %s) "
+                                    "ON CONFLICT (track_id, genre_id) DO NOTHING;"
+                                ),
+                                (track_id, genre_id),
+                            )
+                            # if (
+                            #     cursor.rowcount > 0
+                            # ):  # rowcount is 1 if inserted, 0 if conflict and did nothing
+                            #     linked_track_genres += 1
+                        except psycopg2.Error as link_err:
+                            logger.error(
+                                f"Error linking track ID {track_id} "
+                                f"to genre ID {genre_id} ('{genre_name}'): {link_err}"
+                            )
+
+            except psycopg2.Error as db_err:
+                logger.error(
+                    f"Database error processing song "
+                    f"(Track URI: {song_info['Track URI']}): {db_err}"
+                )
+                self.conn.rollback()  # Rollback current transaction segment
+                # Decide if you want to continue with the next row or stop
+            except Exception as e:
+                logger.error(
+                    f"General error processing song (Track URI: {song_info['Track URI']}): {e}"
+                )
+                self.conn.rollback()  # Rollback current transaction segment
+
+            self.conn.commit()  # Final commit for any remaining operations
+            logger.info("ETL process completed.")
+
+        return track_id
 
     def close(self):
         self.conn.close()
