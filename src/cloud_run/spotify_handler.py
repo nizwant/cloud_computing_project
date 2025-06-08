@@ -98,16 +98,16 @@ def get_track_metadata(title: str, artist: str) -> Optional[Dict[str, Any]]:
         
         # Compile metadata
         metadata = {
-            'original_track_uri': track_uri,
-            'track_name': track_name,
-            'artist_names': artist_names,
-            'album_name': album_name,
-            'album_release_date': release_date,
-            'album_image_url': album_image_url,
-            'track_duration_ms': track_data.get('duration_ms'),
-            'explicit': track_data.get('explicit', False),
-            'popularity': track_data.get('popularity', 0),
-            'genres': genres
+            'Track URI': track_uri,
+            'Track Name': track_name,
+            'Artist Name(s)': artist_names,
+            'Album Name': album_name,
+            'Album Release Date': release_date,
+            'Album Image URL': album_image_url,
+            'Track Duration (ms)': track_data.get('duration_ms'),
+            'Explicit': track_data.get('explicit', False),
+            'Popularity': track_data.get('popularity', 0),
+            'Artist Genres': genres
         }
         
         return metadata

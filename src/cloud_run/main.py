@@ -91,7 +91,7 @@ def process_pubsub_message():
             
             # 1. Search for song metadata via Spotify APIs
             track_metadata = get_track_metadata(title, artist)
-            
+
             if not track_metadata:
                 logger.warning(f"[Song Processor] No metadata found for '{title}' by '{artist}'")
                 return "Bad Request: No metadata found for the song - probably niche song or not a song at all", 400
@@ -100,32 +100,15 @@ def process_pubsub_message():
             #     return "Bad Request: Metadata mismatch", 400
             
             # Log metadata
-            logger.info(f"Found metadata for '{title}' by '{artist}'")
-            logger.info(f"Track URI: {track_metadata.get('original_track_uri')}")
-            logger.info(f"Album URL: {track_metadata.get('album_image_url')}")
-            logger.info(f"Release Date: {track_metadata.get('album_release_date')}")
-            logger.info(f"Track Duration (ms): {track_metadata.get('track_duration_ms')}")
-            logger.info(f"Explicit Content: {track_metadata.get('explicit')}")
-            logger.info(f"Popularity: {track_metadata.get('popularity')}")
-            logger.info(f"Genres: {', '.join(track_metadata.get('genres', []))}")
-            
-            # Store the metadata for further processing
-            # song_info['metadata'] = track_metadata
-            song_info['track_uri'] = track_metadata.get('original_track_uri')
-            song_info['album_image_url'] = track_metadata.get('album_image_url')
-            song_info['album_release_date'] = track_metadata.get('album_release_date')
-            song_info['track_duration_ms'] = track_metadata.get('track_duration_ms')
-            song_info['explicit'] = track_metadata.get('explicit')
-            song_info['popularity'] = track_metadata.get('popularity')
-            song_info['genres'] = track_metadata.get('genres', [])
+            logger.info(f"[Song Processor] Found metadata for '{title}' by '{artist}': {track_metadata}")
 
             # 2. Search for YouTube url via YouTube APIs
             try:
                 video_info = fetch_youtube_video(title, artist)
                 if video_info:
                     logger.info(f"Found YouTube video: {video_info['title']} - {video_info['url']}")
-                    song_info['youtube_url'] = video_info['url']
-                    song_info['youtube_title'] = video_info['title']
+                    track_metadata['youtube_url'] = video_info['url']
+                    track_metadata['youtube_title'] = video_info['title']
                 else:
                     logger.warning(f"No YouTube videos found for '{title}' by '{artist}'")
                     return "Bad Request: No YouTube video found for the song", 400
@@ -137,7 +120,7 @@ def process_pubsub_message():
             # 4. Create fingerprint of the audio file
             # 5. Upload song data and fingerprint to the database
             db = create_fingerprint_db(db_type="gcp")
-            track_id = db.load_song_to_tracks(song_info)
+            track_id = db.load_song_to_tracks(track_metadata)
             index_single_song_gcp(song_id = track_id,
                                   song_name = title,
                                   youtube_url = song_info['youtube_url'],

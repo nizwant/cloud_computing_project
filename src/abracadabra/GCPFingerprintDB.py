@@ -238,7 +238,7 @@ class GCPFingerprintDB(AbstractFingerprintDB):
                     )
                     return
 
-                artist_names = row["Artist Name(s)"]
+                artist_names = song_info["Artist Name(s)"]
                 album_name = song_info["Album Name"]
                 album_release_date_str = song_info["Album Release Date"]
                 album_image_url = song_info["Album Image URL"]
