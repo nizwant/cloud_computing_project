@@ -3,7 +3,7 @@ entrypoint: gunicorn -b :$PORT app_engine.main:app
 
 handlers:
 - url: /static
-  static_dir: static
+  static_dir: app_engine/static
 
 - url: /.*
   script: auto
