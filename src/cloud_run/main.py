@@ -3,15 +3,12 @@ import base64
 import json
 import logging
 import os
-from spotify_handler import get_track_metadata
+from cloud_run.spotify_handler import get_track_metadata
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.cloud import secretmanager
 import sys
 
-sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
-)
 from abracadabra.database import create_fingerprint_db
 from abracadabra.recognize import index_single_song_gcp
 

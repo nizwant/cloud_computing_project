@@ -11,3 +11,6 @@ pydub
 scipy
 librosa
 psycopg2-binary
+tqdm
+protobuf
+auto_mix_prep

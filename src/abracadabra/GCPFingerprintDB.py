@@ -88,6 +88,7 @@ class GCPFingerprintDB(AbstractFingerprintDB):
             "outtmpl": output_path,
             "quiet": True,
             "no_warnings": True,
+            "cookiefile": "../abracadabra/www.youtube.com_cookies.txt",
             "postprocessors": [
                 {
                     "key": "FFmpegExtractAudio",
