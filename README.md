@@ -112,10 +112,6 @@ Truth be told, we're guessing there is a Python package that does all of this (m
 
 <img src="https://github.com/nizwant/Cloud-project/blob/main/deliverable/img/list_available_songs.png" alt="listing" width="400">
 
-### Unanswered questions
-
-- do we need to implement authorization/authentication
-- rate limiting
 
 ### What already has been done
 
