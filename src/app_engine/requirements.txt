@@ -11,3 +11,4 @@ pydub
 scipy
 tqdm
 yt_dlp
+google-api-python-client
