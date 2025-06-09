@@ -36,6 +36,9 @@ def generate_fingerprints(
             delta_t = t2 - t1
             if min_delta <= delta_t <= max_delta:
                 fingerprints.append(
-                    {"hash": {"f1": f1, "f2": f2, "delta_t": delta_t}, "timestamp": t1}
+                    {
+                        "hash": {"f1": int(f1), "f2": int(f2), "delta_t": int(delta_t)},
+                        "timestamp": float(t1),
+                    }
                 )
     return fingerprints
