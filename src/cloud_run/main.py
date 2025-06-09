@@ -2,12 +2,10 @@ from flask import Flask, request
 import base64
 import json
 import logging
-import os
 from cloud_run.spotify_handler import get_track_metadata
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.cloud import secretmanager
-import sys
 
 from abracadabra.database import create_fingerprint_db
 from abracadabra.recognize import index_single_song_gcp
@@ -146,7 +144,7 @@ def process_pubsub_message():
             track_id = db.load_song_to_tracks(track_metadata)
             if not track_id:
                 logger.error(
-                    f"[Song Processor] Failed to load song "
+                    "[Song Processor] Failed to load song "
                     f"'{title}' by '{artist}' to the database"
                 )
                 return "Internal Server Error: Failed to load song to the database", 500
