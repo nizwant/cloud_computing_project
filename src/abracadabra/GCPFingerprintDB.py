@@ -74,7 +74,7 @@ class GCPFingerprintDB(AbstractFingerprintDB):
     def load_audio(
         youtube_url: str,
         song_id: int,
-        download_dir: str = "../songs/temp",
+        download_dir: str = "abracadabra/temp",
         sr: int = 22050,
     ):
         print(f"Downloading audio from {youtube_url}...")
@@ -88,7 +88,7 @@ class GCPFingerprintDB(AbstractFingerprintDB):
             "outtmpl": output_path,
             "quiet": True,
             "no_warnings": True,
-            "cookiefile": "../abracadabra/www.youtube.com_cookies.txt",
+            "cookiefile": "abracadabra/www.youtube.com_cookies.txt",
             "postprocessors": [
                 {
                     "key": "FFmpegExtractAudio",

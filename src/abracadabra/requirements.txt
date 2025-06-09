@@ -2,7 +2,7 @@ auto_mix_prep
 librosa
 numpy
 protobuf
-psycopg2
+psycopg2-binary
 pydub
 scipy
 tqdm

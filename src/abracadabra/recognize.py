@@ -17,11 +17,6 @@ from tqdm import tqdm
 from typing import Union
 from io import BytesIO
 
-# from pydub.utils import which
-# AudioSegment.converter = which("ffmpeg")
-# import pydub
-# pydub.AudioSegment.ffmpeg = "ffmpeg"
-
 
 def process_single_song(
     db: AbstractFingerprintDB, song_id: int, path: str, title: str
@@ -33,7 +28,7 @@ def process_single_song(
 
 
 def index_single_song_memory(
-    song_id: int, filename: str, db: AbstractFingerprintDB, song_dir: str = "../songs"
+    song_id: int, filename: str, db: AbstractFingerprintDB, song_dir: str = "../temp"
 ):
     if filename.lower().endswith(".m4a"):
         try:
