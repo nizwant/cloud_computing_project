@@ -1,0 +1,17 @@
+flask
+gunicorn
+yt-dlp
+google-cloud-pubsub
+requests
+spotipy
+google-cloud-secret-manager
+google-api-python-client
+numpy
+pydub
+scipy
+librosa
+psycopg2-binary
+google-cloud-pubsub
+auto_mix_prep
+protobuf
+tqdm
