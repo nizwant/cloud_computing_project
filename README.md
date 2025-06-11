@@ -12,10 +12,10 @@ The project is a part of the Cloud Computing course at the Warsaw University of 
 ### Final Results
 
 Main page of the app:
-<img src="https://github.com/nizwant/Cloud-project/blob/main/deliverable/img/architecture.png" alt="crawling" width="700">
+<img src="https://github.com/nizwant/Cloud-project/blob/main/deliverable/img/main.png" alt="main page of an app" width="700">
 
 Other pages:
-<img src="https://github.com/nizwant/Cloud-project/blob/main/deliverable/img/architecture.png" alt="crawling" width="700">
+<img src="https://github.com/nizwant/Cloud-project/blob/main/deliverable/img/rest.png" alt="the rest of pages" width="700">
 
 In the end, the app allowed users to record or upload a song snippet, and within 5–15 seconds, it would match the snippet to a song and display the results. The user would then see details about the identified song and a link to its music video on YouTube.
 
